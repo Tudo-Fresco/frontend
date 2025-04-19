@@ -3,14 +3,14 @@ import { Box, Button, Container, TextField, Typography } from '@mui/material';
 import Logo from '../components/Logo';
 import { useNavigate } from 'react-router-dom';
 import { loginService } from '../services/LoginService';
-import ErrorBanner from '../components/ErrorBanner'; // Don't forget this!
+import ErrorBanner from '../components/ErrorBanner';
 
 const Login = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [showError, setShowError] = useState(false); // Add this state
+  const [showError, setShowError] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,15 +47,12 @@ const Login = () => {
           Login to connect producers and buyers 🌱
         </Typography>
 
-        {/* Error Banner */}
         <ErrorBanner
-          message="Hardcoded test error"
-          open={true}
-          onClose={() => console.log("Banner close clicked")}
+          message={error}
+          open={showError}
+          onClose={() => setShowError(false)}
         />
 
-
-        {/* Username input */}
         <TextField
           label="Username"
           type="text"
@@ -65,7 +62,6 @@ const Login = () => {
           onChange={(e) => setUsername(e.target.value)}
         />
 
-        {/* Password input */}
         <TextField
           label="Password"
           type="password"
