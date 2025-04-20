@@ -1,10 +1,9 @@
-// services/auth.ts
 import { LoginResponse } from '../models/LoginResponse';
 import { ApiConnector } from '../utils/ApiConnector';
 
 const api = new ApiConnector('http://localhost:8777');
 
-export async function loginService(username: string, password: string): Promise<LoginResponse> {
+export async function performLogin(username: string, password: string): Promise<LoginResponse> {
   const formData = new URLSearchParams();
   formData.append('username', username);
   formData.append('password', password);

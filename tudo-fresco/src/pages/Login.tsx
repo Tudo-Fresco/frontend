@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Button, Container, TextField, Typography } from '@mui/material';
 import Logo from '../components/Logo';
 import { useNavigate } from 'react-router-dom';
-import { loginService } from '../services/LoginService';
+import { performLogin } from '../services/AuthService';
 import ErrorBanner from '../components/ErrorBanner';
 
 const Login = () => {
@@ -17,12 +17,12 @@ const Login = () => {
     setShowError(false);
 
     try {
-      const loginData = await loginService(username, password);
-      localStorage.setItem('access_token', loginData.accessToken);
-      localStorage.setItem('token_type', loginData.tokenType);
+      const loginResponse = await performLogin(username, password);
+      localStorage.setItem('access_token', loginResponse.accessToken);
+      localStorage.setItem('token_type', loginResponse.tokenType);
       navigate('/');
     } catch (err: any) {
-      setError(err.message || 'Login failed');
+      setError(err.message ?? 'O Login falhou');
       setShowError(true);
     }
   };
