@@ -1,28 +1,15 @@
-import { handleApiResponse } from './api';
+// services/auth.ts
+import { LoginResponse } from '../models/LoginResponse';
+import { ApiConnector } from '../utils/ApiConnector';
 
-export async function loginService(username: string, password: string) {
-  const url = 'http://localhost:8777/auth/login';
+const api = new ApiConnector('http://localhost:8777');
 
+export async function loginService(username: string, password: string): Promise<LoginResponse> {
   const formData = new URLSearchParams();
   formData.append('username', username);
   formData.append('password', password);
-
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: formData.toString(),
+  const loginResponse = await api.post<LoginResponse>('/auth/login', formData.toString(), {
+    'Content-Type': 'application/x-www-form-urlencoded',
   });
-
-  const { payload, message } = await handleApiResponse<{
-    access_token: string;
-    token_type: string;
-  }>(response);
-
-  return {
-    accessToken: payload.access_token,
-    tokenType: payload.token_type,
-    message,
-  };
+  return loginResponse;
 }
