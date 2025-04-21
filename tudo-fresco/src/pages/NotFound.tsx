@@ -1,14 +1,40 @@
-// src/pages/NotFound.tsx
-import React from 'react';
+import { Container, Typography, Button, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
+import Logo from '../components/Logo';
 
 const NotFound = () => {
   return (
-    <div style={{ textAlign: 'center', padding: '3rem' }}>
-      <h1>404 - Page Not Found</h1>
-      <p>The page you're looking for doesn't exist.</p>
-      <Link to="/">Go to Home</Link>
-    </div>
+    <Container
+      maxWidth="sm"
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
+      }}
+    >
+      <Box sx={{ mb: 4 }}>
+        <Logo />
+      </Box>
+
+      <Typography variant="h3" component="h1" gutterBottom>
+        404
+      </Typography>
+
+      <Typography variant="h5" gutterBottom>
+        Página não encontrada
+      </Typography>
+
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+        Desculpe, a página que você procura não existe ou foi removida.
+      </Typography>
+
+      <Button component={Link} to="/" variant="contained" color="primary">
+        Ir para Home
+      </Button>
+    </Container>
   );
 };
 
