@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, Container, TextField, Typography } from '@mui/material';
+import { Box, Button, Container, TextField, Typography, Link } from '@mui/material';
 import Logo from '../components/Logo';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../services/AuthService';
@@ -74,6 +74,12 @@ const Login = () => {
         <Button variant="contained" color="primary" size="large" type="submit">
           Login
         </Button>
+        <Typography variant="body2" textAlign="center">
+          Primeiro acesso?{' '}
+          <Link href="/register" onClick={() => navigate('/register')}>
+            Clique Aqui
+          </Link>
+        </Typography>
       </Box>
     </Container>
   );

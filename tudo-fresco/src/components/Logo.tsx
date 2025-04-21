@@ -3,7 +3,7 @@ import { Typography } from '@mui/material';
 
 const Logo = () => (
   <Typography variant="h5" fontWeight="bold" color="primary">
-    Tudo Fresco 🌱
+    LOGO Tudo Fresco AQUI 🌱
   </Typography>
 );
 

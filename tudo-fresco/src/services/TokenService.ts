@@ -9,6 +9,6 @@ export function setToken(token: string | null) {
     }
   }
   
-  export function getToken(): string | null {
+export function getToken(): string | null {
     return currentToken ?? localStorage.getItem('accessToken');
   }
