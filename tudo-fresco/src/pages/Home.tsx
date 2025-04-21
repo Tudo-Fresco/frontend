@@ -1,4 +1,3 @@
-import React from 'react';
 import { Container, Typography, Box, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,7 +20,7 @@ const Home = () => {
         <Typography variant="h3" component="h1" gutterBottom>
           Welcome to the Organic Market 🌱
         </Typography>
-        <Typography variant="h5" color="text.secondary" paragraph>
+        <Typography variant="h5" color="text.secondary">
           Connect with producers and buyers in the organic food industry. Explore, buy, and sell fresh organic products.
         </Typography>
       </Box>

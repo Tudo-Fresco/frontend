@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Button, Container, TextField, Typography } from '@mui/material';
 import Logo from '../components/Logo';
 import { useNavigate } from 'react-router-dom';
-import { performLogin } from '../services/AuthService';
+import { login } from '../services/AuthService';
 import ErrorBanner from '../components/ErrorBanner';
 
 const Login = () => {
@@ -17,7 +17,7 @@ const Login = () => {
     setShowError(false);
 
     try {
-      const loginResponse = await performLogin(username, password);
+      const loginResponse = await login(username, password);
       localStorage.setItem('access_token', loginResponse.accessToken);
       localStorage.setItem('token_type', loginResponse.tokenType);
       navigate('/');
