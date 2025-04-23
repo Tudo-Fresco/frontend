@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, Container, TextField, Typography, Link } from '@mui/material';
+import { Box, Button, Container, TextField, Typography, Link, CircularProgress } from '@mui/material';
 import Logo from '../components/Logo';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../services/AuthService';
@@ -11,10 +11,12 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [showError, setShowError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setShowError(false);
+    setIsLoading(true);
 
     try {
       const loginResponse = await login(username, password);
@@ -24,6 +26,8 @@ const Login = () => {
     } catch (err: any) {
       setError(err.message ?? 'O Login falhou');
       setShowError(true);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -60,6 +64,7 @@ const Login = () => {
           required
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          disabled={isLoading}
         />
 
         <TextField
@@ -69,11 +74,20 @@ const Login = () => {
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          disabled={isLoading}
         />
 
-        <Button variant="contained" color="primary" size="large" type="submit">
-          Login
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          type="submit"
+          disabled={isLoading}
+          startIcon={isLoading ? <CircularProgress size={24} color="inherit" /> : null}
+        >
+          {isLoading ? 'Loading...' : 'Login'}
         </Button>
+
         <Typography variant="body2" textAlign="center">
           Primeiro acesso?{' '}
           <Link href="/register" onClick={() => navigate('/register')}>
