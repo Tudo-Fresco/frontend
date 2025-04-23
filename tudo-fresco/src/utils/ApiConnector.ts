@@ -38,12 +38,19 @@ export class ApiConnector {
   }
 
   private async fetchWithHandling<T>(url: string, options: RequestInit): Promise<T> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 4000);
+  
     try {
-      const response = await fetch(url, options);
+      const response = await fetch(url, { ...options, signal: controller.signal });
+      clearTimeout(timeoutId);
       return this.handleResponse<T>(response);
     } catch (err: any) {
+      clearTimeout(timeoutId);
       console.error('Erro capturado no fetch:', err);
-      if (err.name === 'TypeError') {
+      if (err.name === 'AbortError') {
+        throw new Error('A requisição demorou muito para responder. Verifique sua conexão.');
+      } else if (err.name === 'TypeError') {
         throw new Error('Não foi possível conectar ao servidor. Verifique sua internet.');
       }
       throw err;
