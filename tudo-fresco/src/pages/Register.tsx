@@ -18,7 +18,7 @@ import Logo from '../components/Logo';
 import { useNavigate } from 'react-router-dom';
 import { signUp } from '../services/UserService';
 import ErrorBanner from '../components/ErrorBanner';
-import { UserRequestModel, GenderType } from '../models/UserRequestModel';
+import { UserRequestModel } from '../models/UserRequestModel';
 
 interface FormData {
   name: string;
@@ -89,12 +89,27 @@ const Register = () => {
     return `${year}-${month}-${day}`;
   };
 
+  const validateDateOfBirth = (date: string): boolean => {
+    const regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(19|20)\d\d$/; // dd/mm/yyyy format
+    if (!regex.test(date)) return false;
+
+    const [day, month, year] = date.split('/');
+    const dateObj = new Date(`${year}-${month}-${day}`);
+    return dateObj.getDate() === parseInt(day) && dateObj.getMonth() + 1 === parseInt(month) && dateObj.getFullYear() === parseInt(year);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setShowError(false);
 
     if (formData.password !== formData.password_confirmation) {
       setError('As senhas não coincidem.');
+      setShowError(true);
+      return;
+    }
+
+    if (!validateDateOfBirth(formData.date_of_birth)) {
+      setError('A data de nascimento é inválida.');
       setShowError(true);
       return;
     }
@@ -107,8 +122,6 @@ const Register = () => {
         gender: formData.gender,
         phone_number: formData.phone_number,
         password: formData.password,
-        profile_picture: null,
-        user_access: 'STORE_OWNER',
       };
 
       await signUp(userRequest);
