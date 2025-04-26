@@ -91,7 +91,7 @@ const Login = () => {
         <Typography variant="body2" textAlign="center">
           Primeiro acesso?{' '}
           <Link href="/register" onClick={() => navigate('/register')}>
-            Clique Aqui
+            Cadastre-se
           </Link>
         </Typography>
       </Box>
