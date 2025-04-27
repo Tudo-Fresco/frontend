@@ -90,13 +90,16 @@ const Register = () => {
   };
 
   const validateDateOfBirth = (date: string): boolean => {
-    const regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(19|20)\d\d$/; // dd/mm/yyyy format
+    const regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(19|20)\d\d$/;
     if (!regex.test(date)) return false;
-
-    const [day, month, year] = date.split('/');
-    const dateObj = new Date(`${year}-${month}-${day}`);
-    return dateObj.getDate() === parseInt(day) && dateObj.getMonth() + 1 === parseInt(month) && dateObj.getFullYear() === parseInt(year);
-  };
+    const [day, month, year] = date.split('/').map(Number);
+    const dateObj = new Date(year, month - 1, day);
+    return (
+      dateObj.getDate() === day &&
+      dateObj.getMonth() + 1 === month &&
+      dateObj.getFullYear() === year
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
