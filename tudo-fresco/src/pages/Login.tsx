@@ -19,9 +19,7 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const loginResponse = await login(username, password);
-      localStorage.setItem('access_token', loginResponse.accessToken);
-      localStorage.setItem('token_type', loginResponse.tokenType);
+      await login(username, password);
       navigate('/');
     } catch (err: any) {
       setError(err.message ?? 'O Login falhou');
