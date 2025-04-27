@@ -85,7 +85,7 @@ const Login = () => {
           disabled={isLoading}
           startIcon={isLoading ? <CircularProgress size={24} color="inherit" /> : null}
         >
-          {isLoading ? 'Loading...' : 'Login'}
+          {isLoading ? 'Carregando...' : 'Login'}
         </Button>
 
         <Typography variant="body2" textAlign="center">
