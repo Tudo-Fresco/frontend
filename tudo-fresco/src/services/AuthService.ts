@@ -18,10 +18,10 @@ export async function login(username: string, password: string): Promise<LoginRe
   );
   api.setUseAuthorization(true);
   setToken(loginResponse.accessToken);
-
   return loginResponse;
 }
 
 export function logout(): undefined {
   setToken(null);
 }
+
