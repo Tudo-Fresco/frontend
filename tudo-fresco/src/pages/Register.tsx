@@ -13,6 +13,7 @@ import {
   IconButton,
   InputAdornment,
   CircularProgress,
+  SelectChangeEvent,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Logo from '../components/Logo';
@@ -20,6 +21,7 @@ import { useNavigate } from 'react-router-dom';
 import { signUp } from '../services/UserService';
 import ErrorBanner from '../components/ErrorBanner';
 import { UserRequestModel } from '../models/UserRequestModel';
+import { GenderType } from '../enums/GenderType';
 
 interface FormData {
   name: string;
@@ -77,6 +79,13 @@ const Register = () => {
     } else {
       setFormData((prev) => ({ ...prev, [name]: value as string }));
     }
+  };
+
+  const handleGenderChange = (event: SelectChangeEvent<string>) => {
+    setFormData((prev) => ({
+      ...prev,
+      gender: event.target.value,
+    }));
   };
 
   const handleTogglePassword = () => {
@@ -197,7 +206,6 @@ const Register = () => {
           value={formData.date_of_birth}
           onChange={handleChange}
           placeholder="dd/mm/aaaa"
-          inputProps={{ maxLength: 10 }}
           disabled={isLoading}
         />
 
@@ -206,14 +214,14 @@ const Register = () => {
           <Select
             name="gender"
             value={formData.gender}
-            onChange={handleChange}
+            onChange={handleGenderChange}
             label="Gênero"
             disabled={isLoading}
           >
-            <MenuItem value="MALE">Masculino</MenuItem>
-            <MenuItem value="FEMALE">Feminino</MenuItem>
-            <MenuItem value="NOT_APPLICABLE">Não aplicável</MenuItem>
-            <MenuItem value="NOT_KNOWN">Não informado</MenuItem>
+            <MenuItem value={GenderType.MALE}>Masculino</MenuItem>
+            <MenuItem value={GenderType.FEMALE}>Feminino</MenuItem>
+            <MenuItem value={GenderType.NOT_APPLICABLE}>Não aplicável</MenuItem>
+            <MenuItem value={GenderType.NOT_KNOWN}>Não informado</MenuItem>
           </Select>
         </FormControl>
 
@@ -238,14 +246,16 @@ const Register = () => {
           value={formData.password}
           onChange={handleChange}
           disabled={isLoading}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={handleTogglePassword} edge="end">
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={handleTogglePassword} edge="end">
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
           }}
         />
 
@@ -258,14 +268,16 @@ const Register = () => {
           value={formData.password_confirmation}
           onChange={handleChange}
           disabled={isLoading}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={handleTogglePasswordConfirmation} edge="end">
-                  {showPasswordConfirmation ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={handleTogglePasswordConfirmation} edge="end">
+                    {showPasswordConfirmation ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
           }}
         />
         <Button 
