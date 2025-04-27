@@ -1,4 +1,3 @@
-// src/components/ErrorBanner.tsx
 import React from 'react';
 import { Alert, Collapse, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
@@ -10,6 +9,13 @@ interface ErrorBannerProps {
 }
 
 const ErrorBanner: React.FC<ErrorBannerProps> = ({ message, onClose, open }) => {
+  const formattedMessage = message.split('\n').map((str, index) => (
+    <span key={index}>
+      {str}
+      {index < message.split('\n').length - 1 && <br />}
+    </span>
+  ));
+
   return (
     <Collapse in={open}>
       <Alert
@@ -26,7 +32,7 @@ const ErrorBanner: React.FC<ErrorBannerProps> = ({ message, onClose, open }) => 
         }
         sx={{ mb: 2 }}
       >
-        {message}
+        {formattedMessage}
       </Alert>
     </Collapse>
   );
