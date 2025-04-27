@@ -12,6 +12,7 @@ import {
   Link,
   IconButton,
   InputAdornment,
+  CircularProgress,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Logo from '../components/Logo';
@@ -46,6 +47,8 @@ const Register = () => {
   const [showError, setShowError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  
 
   const formatDateMask = (value: string): string => {
     const digits = value.replace(/\D/g, '');
@@ -116,7 +119,7 @@ const Register = () => {
       setShowError(true);
       return;
     }
-
+    setIsLoading(true);
     try {
       const userRequest: UserRequestModel = {
         name: formData.name,
@@ -126,12 +129,14 @@ const Register = () => {
         phone_number: formData.phone_number,
         password: formData.password,
       };
-
       await signUp(userRequest);
       navigate('/login');
     } catch (err: any) {
       setError(err.message ?? 'O cadastro falhou');
       setShowError(true);
+    }
+    finally{
+      setIsLoading(false);
     }
   };
 
@@ -169,6 +174,7 @@ const Register = () => {
           required
           value={formData.name}
           onChange={handleChange}
+          disabled={isLoading}
         />
 
         <TextField
@@ -179,6 +185,7 @@ const Register = () => {
           required
           value={formData.email}
           onChange={handleChange}
+          disabled={isLoading}
         />
 
         <TextField
@@ -191,6 +198,7 @@ const Register = () => {
           onChange={handleChange}
           placeholder="dd/mm/aaaa"
           inputProps={{ maxLength: 10 }}
+          disabled={isLoading}
         />
 
         <FormControl fullWidth required>
@@ -200,6 +208,7 @@ const Register = () => {
             value={formData.gender}
             onChange={handleChange}
             label="Gênero"
+            disabled={isLoading}
           >
             <MenuItem value="MALE">Masculino</MenuItem>
             <MenuItem value="FEMALE">Feminino</MenuItem>
@@ -217,6 +226,7 @@ const Register = () => {
           value={formData.phone_number}
           onChange={handleChange}
           placeholder="(47) 98765-4321"
+          disabled={isLoading}
         />
 
         <TextField
@@ -227,6 +237,7 @@ const Register = () => {
           required
           value={formData.password}
           onChange={handleChange}
+          disabled={isLoading}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -246,6 +257,7 @@ const Register = () => {
           required
           value={formData.password_confirmation}
           onChange={handleChange}
+          disabled={isLoading}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -256,8 +268,14 @@ const Register = () => {
             ),
           }}
         />
-
-        <Button variant="contained" color="primary" size="large" type="submit">
+        <Button 
+          variant="contained"
+          color="primary"
+          size="large"
+          type="submit" 
+          disabled={isLoading}
+          startIcon={isLoading ? <CircularProgress size={24} color="inherit" /> : null}
+        >
           Cadastrar
         </Button>
 
