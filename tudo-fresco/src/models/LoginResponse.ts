@@ -1,4 +1,4 @@
 export interface LoginResponse {
-    accessToken: string;
-    tokenType: string;
+    access_token: string;
+    token_type: string;
 }

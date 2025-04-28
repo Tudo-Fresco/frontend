@@ -1,6 +1,7 @@
+import { UserAccess } from '../enums/UserAccess';
 import { LoginResponse } from '../models/LoginResponse';
 import { ApiConnector } from '../utils/ApiConnector';
-import { setToken } from './TokenService';
+import { setToken, decode_token } from './TokenService';
 
 const api = new ApiConnector();
 
@@ -17,7 +18,7 @@ export async function login(username: string, password: string): Promise<LoginRe
     }
   );
   api.setUseAuthorization(true);
-  setToken(loginResponse.accessToken);
+  setToken(loginResponse.access_token);
   return loginResponse;
 }
 
@@ -25,3 +26,11 @@ export function logout(): undefined {
   setToken(null);
 }
 
+export function hasAccess(requiredAccess: UserAccess[]): boolean {
+  const tokenContent = decode_token();
+  if (!tokenContent) {
+    return false;
+  }
+
+  return requiredAccess.includes(tokenContent.role);
+}
