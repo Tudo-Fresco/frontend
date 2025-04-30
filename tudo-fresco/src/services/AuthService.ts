@@ -22,15 +22,19 @@ export async function login(username: string, password: string): Promise<LoginRe
   return loginResponse;
 }
 
-export function logout(): undefined {
+export function logout(): void {
   setToken(null);
 }
 
-export function hasAccess(requiredAccess: UserAccess[]): boolean {
+export function getUserRoles(): UserAccess {
   const tokenContent = decode_token();
-  if (!tokenContent) {
-    return false;
+  if (tokenContent) {
+    return tokenContent.role;
   }
+  return UserAccess.GUEST;
+}
 
-  return requiredAccess.includes(tokenContent.role);
+export function hasAccess(allowedRoles: UserAccess[]): boolean {
+  const userRole = getUserRoles();
+  return allowedRoles.includes(userRole);
 }

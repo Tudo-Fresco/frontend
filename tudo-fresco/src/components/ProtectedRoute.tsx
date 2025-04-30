@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { hasAccess } from '../services/AuthService';
+import { useAuth } from '../context/AuthContext';
 import { UserAccess } from '../enums/UserAccess';
 
 interface ProtectedRouteProps {
@@ -7,7 +7,15 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
-  return hasAccess(allowedRoles) ? <Outlet /> : <Navigate to="/login" replace />;
+  const { role, isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  const hasAccess = isAuthenticated && allowedRoles.includes(role);
+
+  return hasAccess ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
 export default ProtectedRoute;
