@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Box, Button, Container, TextField, Typography, CircularProgress, Snackbar, Alert } from '@mui/material';
+import { Box, Button, Container, TextField, Typography, CircularProgress } from '@mui/material';
 import Logo from '../components/Logo';
 import { useNavigate } from 'react-router-dom';
 import { create } from '../services/AddressService';
 import ErrorBanner from '../components/ErrorBanner';
-import AddressRequestModel from '../models/AddressRequestMode';
+import SuccessBanner from '../components/SuccessBanner';
+import AddressRequestModel from '../models/AddressRequestModel';
 
 const CreateAddress = () => {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const CreateAddress = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [showError, setShowError] = useState(false);
-  const [successToast, setSuccessToast] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -32,15 +33,18 @@ const CreateAddress = () => {
     }));
   };
 
+  const handleSuccessFinished = () => {
+    navigate('/');
+  };
+
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setShowError(false);
-
+  
     try {
       await create(addressData);
-      setSuccessToast(true);
-      navigate('/');
+      setShowSuccess(true);
     } catch (err: any) {
       setError(err.message ?? 'Falha ao criar endereço');
       setShowError(true);
@@ -48,7 +52,7 @@ const CreateAddress = () => {
       setIsLoading(false);
     }
   };
-
+  
   return (
     <Container maxWidth="xs" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
       <Box
@@ -148,19 +152,13 @@ const CreateAddress = () => {
           {isLoading ? 'Salvando...' : 'Salvar Endereço'}
         </Button>
       </Box>
-
-      {/* Toast de sucesso */}
-      <Snackbar
-        open={successToast}
-        autoHideDuration={3000}
-        onClose={() => setSuccessToast(false)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert onClose={() => setSuccessToast(false)} severity="success" variant="filled" sx={{ width: '100%' }}>
-          Endereço criado com sucesso!
-        </Alert>
-      </Snackbar>
-    </Container>
+      <SuccessBanner
+        message="Endereço criado com sucesso!"
+        open={showSuccess}
+        onClose={() => setShowSuccess(false)}
+        onFinished={handleSuccessFinished}
+      />
+    </Container>  
   );
 };
 
