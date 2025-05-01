@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { Box, Button, Container, TextField, Typography, CircularProgress } from '@mui/material';
-import Logo from '../components/Logo';
 import { useNavigate } from 'react-router-dom';
 import { create } from '../services/AddressService';
 import ErrorBanner from '../components/ErrorBanner';
 import SuccessBanner from '../components/SuccessBanner';
 import AddressRequestModel from '../models/AddressRequestModel';
 
-const CreateAddress = () => {
+interface CreateAddressProps {
+  onAddressCreated?: (address_uuid: string) => void;
+}
+
+const CreateAddress: React.FC<CreateAddressProps> = ({ onAddressCreated }) => {
   const navigate = useNavigate();
   const [addressData, setAddressData] = useState<AddressRequestModel>({
     zip_code: '',
@@ -34,17 +37,22 @@ const CreateAddress = () => {
   };
 
   const handleSuccessFinished = () => {
-    navigate('/');
+    if (!onAddressCreated) {
+      navigate('/');
+    }
   };
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setShowError(false);
-  
+
     try {
-      await create(addressData);
+      const response = await create(addressData);
       setShowSuccess(true);
+      if (onAddressCreated && response.uuid) {
+        onAddressCreated(response.uuid);
+      }
     } catch (err: any) {
       setError(err.message ?? 'Falha ao criar endereço');
       setShowError(true);
@@ -52,7 +60,7 @@ const CreateAddress = () => {
       setIsLoading(false);
     }
   };
-  
+
   return (
     <Container maxWidth="xs" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
       <Box
@@ -65,9 +73,6 @@ const CreateAddress = () => {
           gap: 2,
         }}
       >
-        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-          <Logo />
-        </Box>
 
         <Typography variant="subtitle1" textAlign="center" color="text.secondary">
           Cadastre o endereço da sua empresa 📍
@@ -158,7 +163,7 @@ const CreateAddress = () => {
         onClose={() => setShowSuccess(false)}
         onFinished={handleSuccessFinished}
       />
-    </Container>  
+    </Container>
   );
 };
 

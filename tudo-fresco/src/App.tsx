@@ -8,6 +8,7 @@ import CreateAddress from './pages/CreateAddress';
 import { UserAccess } from './enums/UserAccess';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
+import CreateStore from './pages/CreateStore';
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
             <Route path="/register" element={<Register />} />
             <Route element={<ProtectedRoute allowedRoles={[UserAccess.STORE_OWNER, UserAccess.ADMIN]} />}>
               <Route path="/address" element={<CreateAddress />} />
+              <Route path="/store" element={<CreateStore />} />
             </Route>
             <Route path="/" element={<PublicHome />} />
             <Route path="*" element={<NotFound />} />
