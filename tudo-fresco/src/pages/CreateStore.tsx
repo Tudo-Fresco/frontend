@@ -44,6 +44,12 @@ const CreateStore = () => {
     [StoreType.RETAILER]: 'Comprador',
   };
 
+  const formatToBrazilianDate = (isoDate: string): string => {
+    if (!isoDate) return '';
+    const [year, month, day] = isoDate.split('-');
+    return `${day}/${month}/${year}`;
+  };
+  
   const applyCnpjMask = (value: string): string => {
     const numbers = value.replace(/\D/g, '');
     const match = numbers.match(/^(\d{0,2})(\d{0,3})(\d{0,3})(\d{0,4})(\d{0,2})$/);
@@ -111,13 +117,11 @@ const CreateStore = () => {
     try {
       const response: StoreResponseModel = await freshFill(storeData.cnpj);
       setStoreData((prev) => {
-        // Handle opening_date as Date or string
         let openingDate: string = prev.opening_date;
         if (response.opening_date) {
           if (response.opening_date instanceof Date) {
             openingDate = response.opening_date.toISOString().split('T')[0];
           } else if (typeof response.opening_date === 'string') {
-            // Assume string is in YYYY-MM-DD format or validate further
             openingDate = response.opening_date;
           }
         }
@@ -300,16 +304,15 @@ const CreateStore = () => {
             <TextField
               label="Data de Abertura"
               name="opening_date"
-              type="date"
               fullWidth
               required
-              value={storeData.opening_date}
-              onChange={handleChange}
+              value={formatToBrazilianDate(storeData.opening_date)}
               disabled={isLoading || isFreshFillLoading || !isCnpjFound || isCnpjFound}
               InputLabelProps={{ shrink: true }}
+              InputProps={{ readOnly: true }}
             />
             <TextField
-              label="Tamanho (m²)"
+              label="Porte"
               name="size"
               fullWidth
               required
@@ -343,8 +346,6 @@ const CreateStore = () => {
               onChange={handleChange}
               disabled={isLoading || isFreshFillLoading || !isCnpjFound || isCnpjFound}
             />
-            {/* Note: images field omitted for simplicity; add file input if needed */}
-
             <Button
               variant="contained"
               color="primary"
