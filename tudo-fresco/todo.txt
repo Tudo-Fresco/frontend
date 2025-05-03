@@ -1,4 +1,2 @@
-Arrumar a data de abertura da empresa para aparecer em formato BR ao invés de americano
-Fazer a função de buscar endereço pré-preenchido no backend e implementar a mesma lógica no da store
 Fazer o post de loja funcionar
 Fazer o post do address acontecer junto do post da loja para não criar vários endereços órfão quand o usuário desiste de cadastrar a empresa
