@@ -3,13 +3,15 @@ import { Box, Button, Container, TextField, Typography, CircularProgress, MenuIt
 import { Search as SearchIcon } from '@mui/icons-material';
 import Logo from '../components/Logo';
 import { useNavigate } from 'react-router-dom';
-import { create, freshFill } from '../services/StoreService';
+import { create as createStore, freshFill } from '../services/StoreService';
+import { create as createAddress } from '../services/AddressService';
 import ErrorBanner from '../components/ErrorBanner';
 import SuccessBanner from '../components/SuccessBanner';
 import CreateAddress from './CreateAddress';
 import { StoreRequestModel } from '../models/StoreRequestModel';
 import { StoreResponseModel } from '../models/StoreResponseModel';
 import { StoreType } from '../enums/StoreType';
+import AddressRequestModel from '../models/AddressRequestModel';
 
 const CreateStore = () => {
   const navigate = useNavigate();
@@ -30,6 +32,7 @@ const CreateStore = () => {
     images: [],
     branch_classification: '',
   });
+  const [addressData, setAddressData] = useState<AddressRequestModel | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isFreshFillLoading, setIsFreshFillLoading] = useState(false);
   const [isCnpjFound, setIsCnpjFound] = useState(false);
@@ -37,7 +40,6 @@ const CreateStore = () => {
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showAddressForm, setShowAddressForm] = useState(true);
-  const [addressUuid, setAddressUuid] = useState<string | null>(null);
 
   const storeTypeDisplayMap: Record<StoreType, string> = {
     [StoreType.SUPPLIER]: 'Produtor',
@@ -49,7 +51,7 @@ const CreateStore = () => {
     const [year, month, day] = isoDate.split('-');
     return `${day}/${month}/${year}`;
   };
-  
+
   const applyCnpjMask = (value: string): string => {
     const numbers = value.replace(/\D/g, '');
     const match = numbers.match(/^(\d{0,2})(\d{0,3})(\d{0,3})(\d{0,4})(\d{0,2})$/);
@@ -73,7 +75,6 @@ const CreateStore = () => {
       ...prev,
       cnpj: maskedValue,
     }));
-    // Reset CNPJ found state if user changes CNPJ
     setIsCnpjFound(false);
   };
 
@@ -92,12 +93,8 @@ const CreateStore = () => {
     }));
   };
 
-  const handleAddressCreated = (address_uuid: string) => {
-    setAddressUuid(address_uuid);
-    setStoreData((prev) => ({
-      ...prev,
-      address_uuid,
-    }));
+  const handleAddressSubmit = (address: AddressRequestModel) => {
+    setAddressData(address);
     setShowAddressForm(false);
   };
 
@@ -154,8 +151,8 @@ const CreateStore = () => {
 
   const handleCreateStore = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!addressUuid) {
-      setError('Por favor, crie um endereço primeiro.');
+    if (!addressData) {
+      setError('Por favor, informe um endereço primeiro.');
       setShowError(true);
       return;
     }
@@ -168,10 +165,21 @@ const CreateStore = () => {
     setShowError(false);
 
     try {
-      await create(storeData);
+      const addressResponse = await createAddress(addressData);
+      if (!addressResponse.uuid) {
+        throw new Error('Falha ao obter UUID do endereço');
+      }
+
+      const updatedStoreData = {
+        ...storeData,
+        address_uuid: addressResponse.uuid,
+      };
+
+      await createStore(updatedStoreData);
+
       setShowSuccess(true);
     } catch (err: any) {
-      setError(err.message ?? 'Falha ao criar loja');
+      setError(err.message ?? 'Falha ao criar loja e endereço');
       setShowError(true);
     } finally {
       setIsLoading(false);
@@ -197,7 +205,7 @@ const CreateStore = () => {
         </Typography>
 
         {showAddressForm ? (
-          <CreateAddress onAddressCreated={handleAddressCreated} />
+          <CreateAddress onAddressSubmit={handleAddressSubmit} />
         ) : (
           <Box
             component="form"
@@ -234,46 +242,10 @@ const CreateStore = () => {
               </IconButton>
             </Box>
             <TextField
-              label="Nome Fantasia"
-              name="trade_name"
-              fullWidth
-              required
-              value={storeData.trade_name}
-              onChange={handleChange}
-              disabled={isLoading || isFreshFillLoading || !isCnpjFound || isCnpjFound}
-            />
-            <TextField
-              label="Razão Social"
-              name="legal_name"
-              fullWidth
-              required
-              value={storeData.legal_name}
-              onChange={handleChange}
-              disabled={isLoading || isFreshFillLoading || !isCnpjFound || isCnpjFound}
-            />
-            <TextField
-              label="Telefone Legal"
-              name="legal_phone_contact"
-              fullWidth
-              required
-              value={storeData.legal_phone_contact}
-              onChange={handleChange}
-              disabled={isLoading || isFreshFillLoading || !isCnpjFound}
-            />
-            <TextField
               label="Telefone Preferencial"
               name="preferred_phone_contact"
               fullWidth
               value={storeData.preferred_phone_contact}
-              onChange={handleChange}
-              disabled={isLoading || isFreshFillLoading || !isCnpjFound}
-            />
-            <TextField
-              label="Email Legal"
-              name="legal_email_contact"
-              fullWidth
-              required
-              value={storeData.legal_email_contact}
               onChange={handleChange}
               disabled={isLoading || isFreshFillLoading || !isCnpjFound}
             />
@@ -302,14 +274,44 @@ const CreateStore = () => {
               ))}
             </TextField>
             <TextField
+              label="Nome Fantasia"
+              name="trade_name"
+              fullWidth
+              required
+              value={storeData.trade_name}
+              disabled
+            />
+            <TextField
+              label="Razão Social"
+              name="legal_name"
+              fullWidth
+              required
+              value={storeData.legal_name}
+              disabled
+            />
+            <TextField
+              label="Telefone Legal"
+              name="legal_phone_contact"
+              fullWidth
+              required
+              value={storeData.legal_phone_contact}
+              disabled
+            />
+            <TextField
+              label="Email Legal"
+              name="legal_email_contact"
+              fullWidth
+              required
+              value={storeData.legal_email_contact}
+              disabled
+            />
+            <TextField
               label="Data de Abertura"
               name="opening_date"
               fullWidth
               required
               value={formatToBrazilianDate(storeData.opening_date)}
-              disabled={isLoading || isFreshFillLoading || !isCnpjFound || isCnpjFound}
-              InputLabelProps={{ shrink: true }}
-              InputProps={{ readOnly: true }}
+              disabled
             />
             <TextField
               label="Porte"
@@ -317,8 +319,7 @@ const CreateStore = () => {
               fullWidth
               required
               value={storeData.size}
-              onChange={handleChange}
-              disabled={isLoading || isFreshFillLoading || !isCnpjFound || isCnpjFound}
+              disabled
             />
             <TextField
               label="Natureza Jurídica"
@@ -326,8 +327,7 @@ const CreateStore = () => {
               fullWidth
               required
               value={storeData.legal_nature}
-              onChange={handleChange}
-              disabled={isLoading || isFreshFillLoading || !isCnpjFound || isCnpjFound}
+              disabled
             />
             <TextField
               label="Código CNAE"
@@ -335,16 +335,14 @@ const CreateStore = () => {
               fullWidth
               required
               value={storeData.cnae_code}
-              onChange={handleChange}
-              disabled={isLoading || isFreshFillLoading || !isCnpjFound || isCnpjFound}
+              disabled
             />
             <TextField
               label="Classificação da Filial"
               name="branch_classification"
               fullWidth
               value={storeData.branch_classification}
-              onChange={handleChange}
-              disabled={isLoading || isFreshFillLoading || !isCnpjFound || isCnpjFound}
+              disabled
             />
             <Button
               variant="contained"

@@ -1,19 +1,16 @@
 import React, { useState } from 'react';
 import { Box, Button, Container, TextField, Typography, CircularProgress, IconButton } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { create, freshFill } from '../services/AddressService';
+import { freshFill } from '../services/AddressService';
 import ErrorBanner from '../components/ErrorBanner';
-import SuccessBanner from '../components/SuccessBanner';
 import AddressRequestModel from '../models/AddressRequestModel';
 import AddressResponseModel from '../models/AddressResponseModel';
 
 interface CreateAddressProps {
-  onAddressCreated?: (address_uuid: string) => void;
+  onAddressSubmit: (addressData: AddressRequestModel) => void;
 }
 
-const CreateAddress: React.FC<CreateAddressProps> = ({ onAddressCreated }) => {
-  const navigate = useNavigate();
+const CreateAddress: React.FC<CreateAddressProps> = ({ onAddressSubmit }) => {
   const [addressData, setAddressData] = useState<AddressRequestModel>({
     zip_code: '',
     street_address: '',
@@ -25,12 +22,10 @@ const CreateAddress: React.FC<CreateAddressProps> = ({ onAddressCreated }) => {
     number: '',
     additional_info: '',
   });
-  const [isLoading, setIsLoading] = useState(false);
   const [isFreshFillLoading, setIsFreshFillLoading] = useState(false);
   const [isCepFound, setIsCepFound] = useState(false);
   const [error, setError] = useState('');
   const [showError, setShowError] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
 
   const applyCepMask = (value: string): string => {
     const numbers = value.replace(/\D/g, '');
@@ -58,12 +53,6 @@ const CreateAddress: React.FC<CreateAddressProps> = ({ onAddressCreated }) => {
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleSuccessFinished = () => {
-    if (!onAddressCreated) {
-      navigate('/');
-    }
   };
 
   const handleFreshFill = async () => {
@@ -98,35 +87,21 @@ const CreateAddress: React.FC<CreateAddressProps> = ({ onAddressCreated }) => {
     }
   };
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isCepFound) {
       setError('Por favor, busque e valide o CEP antes de prosseguir.');
       setShowError(true);
       return;
     }
-    setIsLoading(true);
-    setShowError(false);
-
-    try {
-      const response = await create(addressData);
-      setShowSuccess(true);
-      if (onAddressCreated && response.uuid) {
-        onAddressCreated(response.uuid);
-      }
-    } catch (err: any) {
-      setError(err.message ?? 'Falha ao criar endereço');
-      setShowError(true);
-    } finally {
-      setIsLoading(false);
-    }
+    onAddressSubmit(addressData);
   };
 
   return (
     <Container maxWidth="xs" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
       <Box
         component="form"
-        onSubmit={handleCreate}
+        onSubmit={handleSubmit}
         sx={{
           width: '100%',
           display: 'flex',
@@ -152,12 +127,12 @@ const CreateAddress: React.FC<CreateAddressProps> = ({ onAddressCreated }) => {
             required
             value={addressData.zip_code}
             onChange={handleCepChange}
-            disabled={isLoading || isFreshFillLoading}
+            disabled={isFreshFillLoading}
             inputProps={{ maxLength: 9 }}
           />
           <IconButton
             onClick={handleFreshFill}
-            disabled={isLoading || isFreshFillLoading || !addressData.zip_code}
+            disabled={isFreshFillLoading || !addressData.zip_code}
             color="primary"
           >
             {isFreshFillLoading ? <CircularProgress size={24} /> : <SearchIcon />}
@@ -170,7 +145,7 @@ const CreateAddress: React.FC<CreateAddressProps> = ({ onAddressCreated }) => {
           required
           value={addressData.street_address}
           onChange={handleChange}
-          disabled={isLoading || isFreshFillLoading || !isCepFound}
+          disabled={isFreshFillLoading || !isCepFound}
         />
         <TextField
           label="Número"
@@ -179,7 +154,7 @@ const CreateAddress: React.FC<CreateAddressProps> = ({ onAddressCreated }) => {
           required
           value={addressData.number}
           onChange={handleChange}
-          disabled={isLoading || isFreshFillLoading || !isCepFound}
+          disabled={isFreshFillLoading || !isCepFound}
         />
         <TextField
           label="Complemento"
@@ -187,7 +162,7 @@ const CreateAddress: React.FC<CreateAddressProps> = ({ onAddressCreated }) => {
           fullWidth
           value={addressData.additional_info}
           onChange={handleChange}
-          disabled={isLoading || isFreshFillLoading || !isCepFound}
+          disabled={isFreshFillLoading || !isCepFound}
         />
         <TextField
           label="Bairro"
@@ -196,7 +171,7 @@ const CreateAddress: React.FC<CreateAddressProps> = ({ onAddressCreated }) => {
           required
           value={addressData.neighbourhood}
           onChange={handleChange}
-          disabled={isLoading || isFreshFillLoading || !isCepFound}
+          disabled={isFreshFillLoading || !isCepFound}
         />
         <TextField
           label="Cidade"
@@ -205,7 +180,7 @@ const CreateAddress: React.FC<CreateAddressProps> = ({ onAddressCreated }) => {
           required
           value={addressData.city}
           onChange={handleChange}
-          disabled={isLoading || isFreshFillLoading || !isCepFound}
+          disabled={isFreshFillLoading || !isCepFound}
         />
         <TextField
           label="Estado"
@@ -214,25 +189,18 @@ const CreateAddress: React.FC<CreateAddressProps> = ({ onAddressCreated }) => {
           required
           value={addressData.province}
           onChange={handleChange}
-          disabled={isLoading || isFreshFillLoading || !isCepFound}
+          disabled={isFreshFillLoading || !isCepFound}
         />
         <Button
           variant="contained"
           color="primary"
           size="large"
           type="submit"
-          disabled={isLoading || isFreshFillLoading || !isCepFound}
-          startIcon={isLoading ? <CircularProgress size={24} color="inherit" /> : null}
+          disabled={isFreshFillLoading || !isCepFound}
         >
-          {isLoading ? 'Salvando...' : 'Salvar Endereço'}
+          Continuar
         </Button>
       </Box>
-      <SuccessBanner
-        message="Endereço criado com sucesso!"
-        open={showSuccess}
-        onClose={() => setShowSuccess(false)}
-        onFinished={handleSuccessFinished}
-      />
     </Container>
   );
 };
