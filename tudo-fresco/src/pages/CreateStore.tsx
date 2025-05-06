@@ -99,7 +99,7 @@ const CreateStore = () => {
   };
 
   const handleSuccessFinished = () => {
-    navigate('/');
+    navigate('/my-stores');
   };
 
   const handleFreshFill = async () => {

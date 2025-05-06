@@ -23,3 +23,12 @@ export async function freshFill(cnpj: string): Promise<StoreResponseModel> {
     }
   );
 }
+
+export async function listByUser(page: number = 1, pageSize: number = 100): Promise<Array<StoreResponseModel>> {
+  return await api.get<Array<StoreResponseModel>>(
+    `/store/list-by-user?page=${page}&per_page=${pageSize}`,
+    {
+      'Content-Type': 'application/json',
+    }
+  );
+}

@@ -1,2 +1,2 @@
-Fazer o post de loja funcionar
-Fazer o post do address acontecer junto do post da loja para não criar vários endereços órfão quand o usuário desiste de cadastrar a empresa
+Arrumar os erros e avisos do app
+Criar a tela de atualização de loja e de cadastro

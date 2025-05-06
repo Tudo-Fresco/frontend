@@ -20,7 +20,7 @@ const Login = () => {
 
     try {
       await login(username, password);
-      navigate('/');
+      navigate('/my-stores');
     } catch (err: any) {
       setError(err.message ?? 'O Login falhou');
       setShowError(true);
