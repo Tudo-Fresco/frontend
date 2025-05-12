@@ -1,2 +1,1 @@
-Arrumar os erros e avisos do app
 Criar a tela de atualização de loja e de cadastro

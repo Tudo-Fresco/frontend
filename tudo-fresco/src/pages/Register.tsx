@@ -21,7 +21,7 @@ import { useNavigate } from 'react-router-dom';
 import { signUp } from '../services/UserService';
 import ErrorBanner from '../components/ErrorBanner';
 import { UserRequestModel } from '../models/UserRequestModel';
-import { GenderType } from '../enums/GenderType';
+import { GenderType, getGenderTypeDisplay } from '../enums/GenderType';
 
 interface FormData {
   name: string;
@@ -218,10 +218,11 @@ const Register = () => {
             label="Gênero"
             disabled={isLoading}
           >
-            <MenuItem value={GenderType.MALE}>Masculino</MenuItem>
-            <MenuItem value={GenderType.FEMALE}>Feminino</MenuItem>
-            <MenuItem value={GenderType.NOT_APPLICABLE}>Não aplicável</MenuItem>
-            <MenuItem value={GenderType.NOT_KNOWN}>Não informado</MenuItem>
+          {Object.values(GenderType).map((type) => (
+            <MenuItem key={type} value={type}>
+              {getGenderTypeDisplay(type)}
+            </MenuItem>
+          ))}
           </Select>
         </FormControl>
 

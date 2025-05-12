@@ -1,11 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Button, Container, Typography, CircularProgress, Card, CardContent, IconButton } from '@mui/material';
+import { JSX, useEffect, useState } from 'react';
+import {
+  Box,
+  Button,
+  Container,
+  Typography,
+  CircularProgress,
+  Card,
+  CardContent,
+  IconButton,
+} from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import Logo from '../components/Logo';
 import { listByUser } from '../services/StoreService';
 import { StoreResponseModel } from '../models/StoreResponseModel';
-import { StoreType } from '../enums/StoreType';
+import { getStoreTypeDisplay, StoreType } from '../enums/StoreType';
 import ErrorBanner from '../components/ErrorBanner';
 
 const MyStores = () => {
@@ -15,11 +24,6 @@ const MyStores = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [showError, setShowError] = useState(false);
-
-  const storeTypeDisplayMap: Record<StoreType, string> = {
-    [StoreType.SUPPLIER]: 'Produtor',
-    [StoreType.RETAILER]: 'Comprador',
-  };
 
   useEffect(() => {
     const fetchStores = async () => {
@@ -50,8 +54,76 @@ const MyStores = () => {
   };
 
   const handleCreateStore = () => {
-    navigate('/create-store');
+    navigate('/store');
   };
+
+  let content: JSX.Element;
+
+  if (isLoading) {
+    content = (
+      <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
+  } else if (stores.length === 0) {
+    content = (
+      <Box sx={{ textAlign: 'center', py: 4 }}>
+        <Typography variant="body1" color="text.secondary" gutterBottom>
+          Você ainda não tem lojas cadastradas.
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          startIcon={<AddIcon />}
+          onClick={handleCreateStore}
+        >
+          Adicionar novo negócio
+        </Button>
+      </Box>
+    );
+  } else {
+    content = (
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {stores.map((store) => (
+          <Card
+            key={store.uuid}
+            onClick={() => store.uuid && handleSelectStore(store.uuid)}
+            sx={{
+              width: '100%',
+              cursor: 'pointer',
+              border: '1px solid',
+              borderColor: selectedStoreUuid === store.uuid ? 'primary.light' : 'transparent',
+              bgcolor: 'background.paper',
+              '&:hover': {
+                bgcolor: 'action.hover',
+              },
+              transition: 'border-color 0.2s, background-color 0.2s',
+            }}
+          >
+            <CardContent>
+              <Typography variant="h6" component="div">
+                {store.legal_name}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Tipo: {getStoreTypeDisplay(store.store_type ?? StoreType.UNKNOWN)}
+              </Typography>
+            </CardContent>
+          </Card>
+        ))}
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          onClick={handleConfirmSelection}
+          disabled={!selectedStoreUuid}
+          sx={{ mt: 2 }}
+        >
+          Selecionar e Continuar
+        </Button>
+      </Box>
+    );
+  }
 
   return (
     <Container maxWidth="sm" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
@@ -73,11 +145,7 @@ const MyStores = () => {
             Minhas Lojas 🏬
           </Typography>
           {stores.length > 0 && (
-            <IconButton
-              color="primary"
-              onClick={handleCreateStore}
-              size="small"
-            >
+            <IconButton color="primary" onClick={handleCreateStore} size="small">
               <AddIcon />
             </IconButton>
           )}
@@ -89,65 +157,7 @@ const MyStores = () => {
           onClose={() => setShowError(false)}
         />
 
-        {isLoading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-            <CircularProgress />
-          </Box>
-        ) : stores.length === 0 ? (
-          <Box sx={{ textAlign: 'center', py: 4 }}>
-            <Typography variant="body1" color="text.secondary" gutterBottom>
-              Você ainda não tem lojas cadastradas.
-            </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              startIcon={<AddIcon />}
-              onClick={handleCreateStore}
-            >
-              Adicionar novo negócio
-            </Button>
-          </Box>
-        ) : (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {stores.map((store) => (
-              <Card
-                key={store.uuid}
-                onClick={() => handleSelectStore(store.uuid)}
-                sx={{
-                  width: '100%',
-                  cursor: 'pointer',
-                  border: '1px solid',
-                  borderColor: selectedStoreUuid === store.uuid ? 'primary.light' : 'transparent',
-                  bgcolor: 'background.paper',
-                  '&:hover': {
-                    bgcolor: 'action.hover',
-                  },
-                  transition: 'border-color 0.2s, background-color 0.2s',
-                }}
-              >
-                <CardContent>
-                  <Typography variant="h6" component="div">
-                    {store.legal_name}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Tipo: {storeTypeDisplayMap[store.store_type] || store.store_type}
-                  </Typography>
-                </CardContent>
-              </Card>
-            ))}
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              onClick={handleConfirmSelection}
-              disabled={!selectedStoreUuid}
-              sx={{ mt: 2 }}
-            >
-              Selecionar e Continuar
-            </Button>
-          </Box>
-        )}
+        {content}
       </Box>
     </Container>
   );

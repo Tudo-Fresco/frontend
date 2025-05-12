@@ -10,7 +10,7 @@ import SuccessBanner from '../components/SuccessBanner';
 import CreateAddress from './CreateAddress';
 import { StoreRequestModel } from '../models/StoreRequestModel';
 import { StoreResponseModel } from '../models/StoreResponseModel';
-import { StoreType } from '../enums/StoreType';
+import { getStoreTypeDisplay, StoreType } from '../enums/StoreType';
 import AddressRequestModel from '../models/AddressRequestModel';
 
 const CreateStore = () => {
@@ -40,11 +40,6 @@ const CreateStore = () => {
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showAddressForm, setShowAddressForm] = useState(true);
-
-  const storeTypeDisplayMap: Record<StoreType, string> = {
-    [StoreType.SUPPLIER]: 'Produtor',
-    [StoreType.RETAILER]: 'Comprador',
-  };
 
   const formatToBrazilianDate = (isoDate: string): string => {
     if (!isoDate) return '';
@@ -269,7 +264,7 @@ const CreateStore = () => {
             >
               {Object.values(StoreType).map((type) => (
                 <MenuItem key={type} value={type}>
-                  {storeTypeDisplayMap[type] || type}
+                 {getStoreTypeDisplay(type)}
                 </MenuItem>
               ))}
             </TextField>
