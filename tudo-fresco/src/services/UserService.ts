@@ -1,12 +1,23 @@
 import { ApiConnector } from '../utils/ApiConnector';
 import { UserRequestModel } from '../models/UserRequestModel';
+import { UserResponseModel } from '../models/UserResponseModel';
+import { getUserId } from './AuthService';
 
 const api = new ApiConnector();
 
- export async function signUp(userData: UserRequestModel): Promise<void> {
-    api.setUseAuthorization(false);
-    await api.post<void>('/user/sign-up', JSON.stringify(userData), {
+export async function signUp(userData: UserRequestModel): Promise<void> {
+  api.setUseAuthorization(false);
+  await api.post<void>('/user/sign-up', JSON.stringify(userData), {
+    'Content-Type': 'application/json',
+  });
+  api.setUseAuthorization(true);
+}
+
+export async function getCurrentUser(): Promise<UserResponseModel> {
+  return await api.get<UserResponseModel>(
+    `/user/by-uuid/${getUserId()}`,
+    {
       'Content-Type': 'application/json',
-    });
-    api.setUseAuthorization(true);
-  }
+    }
+  );
+}

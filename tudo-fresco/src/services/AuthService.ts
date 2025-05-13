@@ -38,3 +38,11 @@ export function hasAccess(allowedRoles: UserAccess[]): boolean {
   const userRole = getUserRoles();
   return allowedRoles.includes(userRole);
 }
+
+export function getUserId(): string | null {
+  const tokenContent = decode_token();
+  if (tokenContent) {
+    return tokenContent.sub;
+  }
+  return null;
+}

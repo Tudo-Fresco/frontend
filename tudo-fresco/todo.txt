@@ -1,1 +1,4 @@
-Criar a tela de atualização de loja e de cadastro
+Criar o cliente google cloud buckets que pode acessar imagens salvas no google
+
+
+Criar avatar do usuário onde ele tem a opção de editar o perfile ou logout
