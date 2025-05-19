@@ -16,6 +16,7 @@ import { listByUser } from '../services/StoreService';
 import { StoreResponseModel } from '../models/StoreResponseModel';
 import { getStoreTypeDisplay, StoreType } from '../enums/StoreType';
 import ErrorBanner from '../components/ErrorBanner';
+import ProfileMenu from '../components/ProfileMenu';
 
 const MyStores = () => {
   const navigate = useNavigate();
@@ -141,6 +142,7 @@ const MyStores = () => {
         </Box>
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <ProfileMenu/>
           <Typography variant="subtitle1" color="text.secondary">
             Minhas Lojas 🏬
           </Typography>

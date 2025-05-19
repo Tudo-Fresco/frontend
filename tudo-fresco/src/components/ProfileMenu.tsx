@@ -1,19 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Avatar, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../services/AuthService';
+import { getCurrentUser, getSignedProfilePictureUrl } from '../services/UserService'; // Import the service functions
+import { UserResponseModel } from '../models/UserResponseModel';
 
-interface ProfileMenuProps {
-  user: {
-    profile_picture?: string;
-    name?: string;
-  };
-}
-
-const ProfileMenu: React.FC<ProfileMenuProps> = ({ user }) => {
+const ProfileMenu: React.FC = () => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [user, setUser] = useState<UserResponseModel | null>(null);
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
   const open = Boolean(anchorEl);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userData = await getCurrentUser();
+        setUser(userData);
+        const signedUrl = await getSignedProfilePictureUrl();
+        setProfilePictureUrl(signedUrl);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        navigate('/login');
+      }
+    };
+
+    fetchUserData();
+  }, [navigate]);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -33,10 +46,6 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ user }) => {
     logout();
     navigate('/login');
   };
-
-  const profilePictureUrl = user.profile_picture
-    ? `/api/${user.profile_picture}`
-    : null;
 
   const getInitials = (name?: string) => {
     if (!name) return 'U';
@@ -58,10 +67,10 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ user }) => {
       >
         <Avatar
           src={profilePictureUrl || undefined}
-          alt={user.name || 'Usuário'}
+          alt={user?.name || 'Usuário'}
           sx={{ width: 40, height: 40 }}
         >
-          {!profilePictureUrl && getInitials(user.name)}
+          {!profilePictureUrl && getInitials(user?.name)}
         </Avatar>
       </IconButton>
       <Menu

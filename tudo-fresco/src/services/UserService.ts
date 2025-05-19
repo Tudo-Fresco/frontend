@@ -21,3 +21,12 @@ export async function getCurrentUser(): Promise<UserResponseModel> {
     }
   );
 }
+
+export async function getSignedProfilePictureUrl(): Promise<string> {
+  return await api.get<string>(
+    `/user/signed-profile-picture`,
+    {
+      'Content-Type': 'application/json',
+    }
+  );
+}

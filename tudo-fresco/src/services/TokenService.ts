@@ -16,7 +16,7 @@ export function getToken(): string | null {
     return currentToken ?? localStorage.getItem('accessToken');
 }
 
-export function decode_token(): TokenContent | null {
+export function decodeToken(): TokenContent | null {
   const token = getToken();
   if (!token) {
       return null;

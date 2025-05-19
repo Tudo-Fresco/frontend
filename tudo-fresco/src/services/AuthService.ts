@@ -1,7 +1,7 @@
 import { UserAccess } from '../enums/UserAccess';
 import { LoginResponse } from '../models/LoginResponse';
 import { ApiConnector } from '../utils/ApiConnector';
-import { setToken, decode_token } from './TokenService';
+import { setToken, decodeToken } from './TokenService';
 
 const api = new ApiConnector();
 
@@ -27,7 +27,7 @@ export function logout(): void {
 }
 
 export function getUserRoles(): UserAccess {
-  const tokenContent = decode_token();
+  const tokenContent = decodeToken();
   if (tokenContent) {
     return tokenContent.role;
   }
@@ -40,7 +40,7 @@ export function hasAccess(allowedRoles: UserAccess[]): boolean {
 }
 
 export function getUserId(): string | null {
-  const tokenContent = decode_token();
+  const tokenContent = decodeToken();
   if (tokenContent) {
     return tokenContent.sub;
   }
