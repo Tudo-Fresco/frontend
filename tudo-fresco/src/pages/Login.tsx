@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Box, Button, Container, TextField, Typography, Link, CircularProgress } from '@mui/material';
+import { Box, Button, Container, TextField, Typography, Link, CircularProgress, InputAdornment, IconButton } from '@mui/material';
 import Logo from '../components/Logo';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../services/AuthService';
 import ErrorBanner from '../components/ErrorBanner';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Visibility from '@mui/icons-material/Visibility';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -12,7 +14,8 @@ const Login = () => {
   const [error, setError] = useState('');
   const [showError, setShowError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
+  
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setShowError(false);
@@ -29,6 +32,10 @@ const Login = () => {
     }
   };
 
+  const handleTogglePasswordConfirmation = () => {
+    setShowPasswordConfirmation((prev) => !prev);
+  };
+  
   return (
     <Container maxWidth="xs" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
       <Box
@@ -67,12 +74,23 @@ const Login = () => {
 
         <TextField
           label="Password"
-          type="password"
+          type={showPasswordConfirmation ? "text" : "password"}
           fullWidth
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           disabled={isLoading}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={handleTogglePasswordConfirmation} edge="end">
+                    {showPasswordConfirmation ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
         />
 
         <Button
