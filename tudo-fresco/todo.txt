@@ -1,4 +1,15 @@
-Criar o cliente google cloud buckets que pode acessar imagens salvas no google
+Home de empresa produtor
+    Feed ver demandas
+        Post
+        Ações do post
+
+Home de empresa comprador
+    Tela de criar demanda
+    Tela de ver demandas e executar crud
+
+Meu perfil
+    Editar dados usuário
+    Passar direto para a página das minha empresas caso o usuário já esteja logado
 
 
-Criar avatar do usuário onde ele tem a opção de editar o perfile ou logout
+CONTINUAR O MÉTODO QUE PEGA AS COORDENADAS APROXIMADAS NO BACKEND NO CREATE DE ADDRESS
