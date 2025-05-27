@@ -1,3 +1,7 @@
+Minhas empresas:
+    Btn para atualizar empresa
+    Atualizar minha empresa
+
 Home de empresa produtor
     Feed ver demandas
         Post
@@ -10,6 +14,3 @@ Home de empresa comprador
 Meu perfil
     Editar dados usuário
     Passar direto para a página das minha empresas caso o usuário já esteja logado
-
-
-CONTINUAR O MÉTODO QUE PEGA AS COORDENADAS APROXIMADAS NO BACKEND NO CREATE DE ADDRESS

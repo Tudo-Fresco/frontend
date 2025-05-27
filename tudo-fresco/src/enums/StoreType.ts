@@ -1,13 +1,11 @@
 export enum StoreType {
   SUPPLIER = 'SUPPLIER',
-  RETAILER = 'RETAILER',
-  UNKNOWN = 'UNKNOWN'
+  RETAILER = 'RETAILER'
 }
 
 export const storeTypeDisplayMap: Record<StoreType, string> = {
   [StoreType.SUPPLIER]: 'Produtor',
-  [StoreType.RETAILER]: 'Comprador',
-  [StoreType.UNKNOWN]: 'Desconhecido',
+  [StoreType.RETAILER]: 'Comprador'
 };
 
 export function getStoreTypeDisplay(type: StoreType): string {
