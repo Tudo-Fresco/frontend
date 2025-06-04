@@ -1,11 +1,12 @@
 Minhas empresas:
+    Campo para filtrar por razão social, nome fantasia ou cnpj
     Btn para atualizar empresa
     Atualizar minha empresa
 
 Home de empresa produtor
     Feed ver demandas
         Post
-        Ações do post
+            Ações do post
 
 Home de empresa comprador
     Tela de criar demanda
@@ -14,3 +15,8 @@ Home de empresa comprador
 Meu perfil
     Editar dados usuário
     Passar direto para a página das minha empresas caso o usuário já esteja logado
+
+
+Login
+    Encaminhar direto para minhas empresas caso o token esteja válido
+
