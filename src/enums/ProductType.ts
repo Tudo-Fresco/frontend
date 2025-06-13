@@ -17,6 +17,7 @@ export enum ProductType {
     FRUIT = 'FRUIT',
     EGG = 'EGG',
     DAIRY = 'DAIRY',
+    ANY = 'ANY'
 }
 
 export const productTypeDisplayMap: Record<ProductType, string> = {
@@ -38,6 +39,7 @@ export const productTypeDisplayMap: Record<ProductType, string> = {
     [ProductType.FRUIT]: 'Fruta',
     [ProductType.EGG]: 'Ovo',
     [ProductType.DAIRY]: 'Laticínio',
+    [ProductType.ANY]: 'Não informado'
 } as const;
 
 export function getProductTypeDisplay(type: ProductType | undefined): string {

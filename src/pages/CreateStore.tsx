@@ -12,6 +12,7 @@ import { StoreRequestModel } from '../models/StoreRequestModel';
 import { StoreResponseModel } from '../models/StoreResponseModel';
 import { getStoreTypeDisplay, StoreType } from '../enums/StoreType';
 import AddressRequestModel from '../models/AddressRequestModel';
+import ProfileMenu from '../components/ProfileMenu';
 
 const CreateStore = () => {
   const navigate = useNavigate();
@@ -194,7 +195,7 @@ const CreateStore = () => {
         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
           <Logo />
         </Box>
-
+        <ProfileMenu />
         <Typography variant="subtitle1" textAlign="center" color="text.secondary">
           Cadastre sua loja 🏬
         </Typography>

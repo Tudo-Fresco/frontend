@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Snackbar, Alert, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -9,21 +9,22 @@ interface SuccessBannerProps {
   open: boolean;
 }
 
-const SuccessBanner: React.FC<SuccessBannerProps> = ({ message, onClose, onFinished, open }) => {
-  useEffect(() => {
-    if (open) {
-      const timer = setTimeout(() => {
-        onFinished();
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [open, onFinished]);
-
+const SuccessBanner: React.FC<SuccessBannerProps> = ({
+  message,
+  onClose,
+  onFinished,
+  open,
+}) => {
   return (
     <Snackbar
       open={open}
       autoHideDuration={3500}
-      onClose={onClose}
+      onClose={(_, reason) => {
+        if (reason !== 'clickaway') {
+          onClose();
+          onFinished();
+        }
+      }}
       anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
     >
       <Alert

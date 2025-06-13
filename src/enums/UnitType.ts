@@ -6,7 +6,7 @@ export enum UnitType {
 }
 
 export const unitTypeDisplayMap: Record<UnitType, string> = {
-    [UnitType.PIECE]: 'Unidade',
+    [UnitType.PIECE]: 'Peça',
     [UnitType.GRAM]: 'Grama',
     [UnitType.KILOGRAM]: 'Quilograma',
     [UnitType.METRIC_TON]: 'Tonelada Métrica',

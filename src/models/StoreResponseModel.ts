@@ -16,7 +16,7 @@ export class StoreResponseModel extends BaseResponseModel {
   preferred_phone_contact?: string;
   legal_email_contact?: string;
   preferred_email_contact?: string;
-  store_type?: StoreType;
+  store_type: StoreType = StoreType.SUPPLIER;
   opening_date?: Date;
   size?: string;
   legal_nature?: string;

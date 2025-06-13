@@ -7,7 +7,7 @@ import {
   CircularProgress,
   Card,
   CardContent,
-  IconButton,
+  Fab,
 } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -49,7 +49,12 @@ const MyStores = () => {
   };
 
   const handleConfirmSelection = () => {
-    if (selectedStoreUuid) {
+    if (!selectedStoreUuid) return;
+    const selectedStore = stores.find(store => store.uuid === selectedStoreUuid);
+    if (!selectedStore) return;
+    if (selectedStore.store_type === StoreType.RETAILER) {
+      navigate(`/demands-retailer/${selectedStoreUuid}`);
+    } else {
       navigate(`/dashboard/${selectedStoreUuid}`);
     }
   };
@@ -72,15 +77,6 @@ const MyStores = () => {
         <Typography variant="body1" color="text.secondary" gutterBottom>
           Você ainda não tem lojas cadastradas.
         </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          startIcon={<AddIcon />}
-          onClick={handleCreateStore}
-        >
-          Adicionar novo negócio
-        </Button>
       </Box>
     );
   } else {
@@ -107,21 +103,23 @@ const MyStores = () => {
                 {store.legal_name}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Tipo: {getStoreTypeDisplay(store.store_type ?? StoreType.UNKNOWN)}
+                Tipo: {getStoreTypeDisplay(store.store_type)}
               </Typography>
             </CardContent>
           </Card>
         ))}
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          onClick={handleConfirmSelection}
-          disabled={!selectedStoreUuid}
-          sx={{ mt: 2 }}
-        >
-          Selecionar e Continuar
-        </Button>
+        <Box width='10en' display='flex' alignItems='center' justifyContent='center'>
+          <Button
+            variant="contained"
+            color="primary"
+            size="medium"
+            onClick={handleConfirmSelection}
+            disabled={!selectedStoreUuid}
+            sx={{ mt: 2 }}
+          >
+            Continuar
+          </Button>
+        </Box>
       </Box>
     );
   }
@@ -142,15 +140,10 @@ const MyStores = () => {
         </Box>
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <ProfileMenu/>
+          <ProfileMenu />
           <Typography variant="subtitle1" color="text.secondary">
             Minhas Lojas 🏬
           </Typography>
-          {stores.length > 0 && (
-            <IconButton color="primary" onClick={handleCreateStore} size="small">
-              <AddIcon />
-            </IconButton>
-          )}
         </Box>
 
         <ErrorBanner
@@ -161,6 +154,14 @@ const MyStores = () => {
 
         {content}
       </Box>
+      <Fab
+        color="primary"
+        aria-label="nova loja"
+        onClick={handleCreateStore}
+        sx={{ position: 'fixed', bottom: 24, right: 24 }}
+      >
+        <AddIcon />
+      </Fab>
     </Container>
   );
 };

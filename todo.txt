@@ -1,14 +1,24 @@
+Produto:
+    Tela de cadastro de produto
+
+Demanda:
+    Tela Criar Demanda
+    Tela Editar Demanda
+    Excluir Demanda
+    Listagem de demandas em formato de lista para empresas com ícones de crud
+
 Minhas empresas:
     Campo para filtrar por razão social, nome fantasia ou cnpj
     Btn para atualizar empresa
     Atualizar minha empresa
+    Ação excluir empresa
 
-Home de empresa produtor
+Home de empresa produtora
     Feed ver demandas
         Post
             Ações do post
 
-Home de empresa comprador
+Home de empresa compradora
     Tela de criar demanda
     Tela de ver demandas e executar crud
 
@@ -19,4 +29,9 @@ Meu perfil
 
 Login
     Encaminhar direto para minhas empresas caso o token esteja válido
+
+
+
+CONTINUAR
+Fazer a listam de demandas pela seleção de uma loja, depois essa tela deve ter acesso as telas de cadastrar produto e também CRUD demanda
 
