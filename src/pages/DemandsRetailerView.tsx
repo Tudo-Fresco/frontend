@@ -139,17 +139,19 @@ const DemandsRetailerView = () => {
                         sx={{ width: 'fit-content' }}
                       />
                       {expandedDemandId === demand.uuid && (
-                        <IconButton
-                          edge="end"
-                          aria-label="editar"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/demands-retailer/${storeUUID}/edit/${demand.uuid}`);
-                          }}
-                          sx={{ mt: 1, alignSelf: 'flex-end' }}
-                        >
-                          <EditIcon fontSize="small" />
-                        </IconButton>
+                        <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
+                          <IconButton
+                            edge="end"
+                            aria-label="editar"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/demands-retailer/update/${storeUUID}/${demand.uuid}`);
+                            }}
+                            sx={{ mt: 1, alignSelf: 'flex-end' }}
+                          >
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                        </Box>
                       )}
                     </Box>
                   }
