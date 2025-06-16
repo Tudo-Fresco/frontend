@@ -145,7 +145,7 @@ const DemandsRetailerView = () => {
                             aria-label="editar"
                             onClick={(e) => {
                               e.stopPropagation();
-                              navigate(`/demands-retailer/update/${storeUUID}/${demand.uuid}`);
+                              navigate(`/demand/update/${storeUUID}/${demand.uuid}`);
                             }}
                             sx={{ mt: 1, alignSelf: 'flex-end' }}
                           >

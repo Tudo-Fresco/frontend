@@ -13,6 +13,7 @@ import MyStores from './pages/MyStores';
 import CreateProduct from './pages/CreateProduct';
 import CreateDemand from './pages/CreateDemand';
 import DemandsRetailerView from './pages/DemandsRetailerView';
+import UpdateDemand from './pages/UpdateDemand';
 
 const App = () => {
   return (
@@ -24,6 +25,7 @@ const App = () => {
             <Route path="/register" element={<Register />} />
             <Route element={<ProtectedRoute allowedRoles={[UserAccess.STORE_OWNER, UserAccess.ADMIN]} />}>
               <Route path="/address" element={<CreateAddress />} />
+              <Route path="/demand/update/:storeUUID/:demandUUID" element={<UpdateDemand />} />
               <Route path="/demand" element={<CreateDemand />} />
               <Route path="/store" element={<CreateStore />} />
               <Route path="/my-stores" element={<MyStores />} />
