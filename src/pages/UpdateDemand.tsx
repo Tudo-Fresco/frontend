@@ -11,7 +11,7 @@ import {
   MenuItem,
 } from '@mui/material';
 import { getByUUID, update } from '../services/DemandService';
-import { DemandStatus, demandStatusDisplayMap, getDemandStatusDisplay } from '../enums/DemandStatus';
+import { DemandStatus, demandStatusDisplayMap } from '../enums/DemandStatus';
 import DemandRequestModel from '../models/DemandRequestModel';
 import DemandResponseModel from '../models/DemandResposeModel';
 
@@ -19,6 +19,7 @@ const UpdateDemand = () => {
   const { storeUUID, demandUUID } = useParams();
   const navigate = useNavigate();
 
+  const [productName, setProductName] = useState('')
   const [form, setForm] = useState<DemandRequestModel | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
@@ -28,8 +29,7 @@ const UpdateDemand = () => {
       if (!storeUUID || !demandUUID) return setError('Parâmetros inválidos.');
       try {
         const response: DemandResponseModel = await getByUUID(demandUUID, storeUUID);
-
-        // Transform response into request model
+        setProductName(response.product.name)
         const requestModel: DemandRequestModel = {
           store_uuid: response.store.uuid,
           product_uuid: response.product.uuid,
@@ -96,9 +96,9 @@ const UpdateDemand = () => {
           label="Produto"
           fullWidth
           margin="normal"
-          value={form.product_uuid}
+          value={productName}
           InputProps={{ readOnly: true }}
-          helperText="Produto não pode ser alterado"
+          helperText="O produto não pode ser alterado"
         />
 
         <TextField
