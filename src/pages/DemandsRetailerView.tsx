@@ -178,7 +178,7 @@ const DemandsRetailerView = () => {
       <Fab
         color="primary"
         aria-label="nova demanda"
-        onClick={() => storeUUID && navigate(`/demands-retailer/${storeUUID}/new`)}
+        onClick={() => storeUUID && navigate(`/demand/${storeUUID}`)}
         sx={{ position: 'fixed', bottom: 24, right: 24 }}
       >
         <AddIcon />

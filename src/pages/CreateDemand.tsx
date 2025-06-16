@@ -101,7 +101,7 @@ const CreateDemand: React.FC = () => {
 
         <Autocomplete
           options={products}
-          getOptionLabel={(option) => option.name}
+          getOptionLabel={(option) => option.search_name}
           loading={isSearching}
           onInputChange={(_, value) => setSearchInput(value)}
           onChange={(_, value) => setSelectedProduct(value)}

@@ -26,7 +26,7 @@ const App = () => {
             <Route element={<ProtectedRoute allowedRoles={[UserAccess.STORE_OWNER, UserAccess.ADMIN]} />}>
               <Route path="/address" element={<CreateAddress />} />
               <Route path="/demand/update/:storeUUID/:demandUUID" element={<UpdateDemand />} />
-              <Route path="/demand" element={<CreateDemand />} />
+              <Route path="/demand/:storeUUID" element={<CreateDemand />} />
               <Route path="/store" element={<CreateStore />} />
               <Route path="/my-stores" element={<MyStores />} />
               <Route path="/product" element={<CreateProduct />} />
