@@ -8,8 +8,10 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
-  Autocomplete
+  Autocomplete,
+  createFilterOptions,
 } from '@mui/material';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { useParams, useNavigate } from 'react-router-dom';
 import { search } from '../services/ProductService';
 import { create as createDemand } from '../services/DemandService';
@@ -18,6 +20,10 @@ import DemandRequestModel from '../models/DemandRequestModel';
 import ProductResponseModel from '../models/ProductResponseModel';
 import { DemandStatus } from '../enums/DemandStatus';
 import ProfileMenu from '../components/ProfileMenu';
+
+const filter = createFilterOptions<
+  ProductResponseModel | { inputValue: string; isNew: boolean }
+>();
 
 const CreateDemand: React.FC = () => {
   const { storeUUID } = useParams<{ storeUUID: string }>();
@@ -100,11 +106,56 @@ const CreateDemand: React.FC = () => {
         </Typography>
 
         <Autocomplete
+          freeSolo
           options={products}
-          getOptionLabel={(option) => option.search_name}
+          filterOptions={(options, params) => {
+            const filtered = filter(options, params);
+
+            const { inputValue } = params;
+            const isExisting = options.some(
+              (option) =>
+                'search_name' in option &&
+                option.search_name.toLowerCase() === inputValue.toLowerCase()
+            );
+
+            if (inputValue !== '' && !isExisting) {
+              filtered.push({
+                inputValue,
+                isNew: true,
+              } as any);
+            }
+
+            return filtered;
+          }}
+          getOptionLabel={(option) => {
+            if (typeof option === 'string') {
+              return option;
+            }
+            if ('isNew' in option && option.isNew) {
+              return `Cadastrar novo produto "${option.inputValue}"`;
+            }
+            return option.search_name;
+          }}
           loading={isSearching}
           onInputChange={(_, value) => setSearchInput(value)}
-          onChange={(_, value) => setSelectedProduct(value)}
+          onChange={(_, value) => {
+            if (value && typeof value !== 'string' && 'isNew' in value && value.isNew) {
+              navigate('/product');
+            } else {
+              setSelectedProduct(value as ProductResponseModel | null);
+            }
+          }}
+          renderOption={(props, option) => {
+            if (typeof option !== 'string' && 'isNew' in option && option.isNew) {
+              return (
+                <li {...props} style={{ fontStyle: 'italic', fontWeight: 'bold', color: '#1976d2' }}>
+                  <AddCircleOutlineIcon fontSize="small" style={{ marginRight: 8 }} />
+                  {`Cadastrar novo produto "${option.inputValue}"`}
+                </li>
+              );
+            }
+            return <li {...props}>{option.search_name}</li>;
+          }}
           renderInput={(params) => (
             <TextField
               {...params}
