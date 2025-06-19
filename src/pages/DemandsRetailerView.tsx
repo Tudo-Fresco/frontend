@@ -9,9 +9,9 @@ import {
   List,
   ListItem,
   ListItemText,
-  Pagination,
   Fab,
   Chip,
+  Button,
   FormControl,
   InputLabel,
   Select,
@@ -23,48 +23,41 @@ import { getDemandStatusDisplay, DemandStatus } from '../enums/DemandStatus';
 import ProfileMenu from '../components/ProfileMenu';
 
 const statusColorMap = {
-  [DemandStatus.OPENED]: 'warning',   // under negotiation
-  [DemandStatus.CLOSED]: 'success',   // completed
-  [DemandStatus.CANCELED]: 'default', // already canceled
+  [DemandStatus.OPENED]: 'warning',
+  [DemandStatus.CLOSED]: 'success',
+  [DemandStatus.CANCELED]: 'default',
 };
+
+const PAGE_SIZE = 5;
 
 const DemandsRetailerView = () => {
   const { storeUUID } = useParams();
   const navigate = useNavigate();
   const [demands, setDemands] = useState([]);
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [statusFilter, setStatusFilter] = useState<DemandStatus | 'ALL'>('OPENED');
-  const PAGE_SIZE = 10;
+  const [statusFilter, setStatusFilter] = useState<DemandStatus>(DemandStatus.OPENED);
+  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
     const fetchDemands = async () => {
-      if (!storeUUID) {
-        setError('ID da loja não fornecido.');
-        return;
-      }
+      if (!storeUUID) return setError('ID da loja não fornecido.');
+
       setIsLoading(true);
       try {
-        const result = await listByStore(storeUUID, page, PAGE_SIZE);
-        const validResult = Array.isArray(result) ? result : [];
-
-        const filtered =
-          statusFilter === 'ALL'
-            ? validResult
-            : validResult.filter((d) => d.status === statusFilter);
-
-        const sorted = filtered.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
-        setDemands(sorted);
-        setTotalPages(Math.ceil(filtered.length / PAGE_SIZE) || 1);
+        const result = await listByStore(storeUUID, page, PAGE_SIZE, 10000, 'ANY', statusFilter);
+        const demandsArray = Array.isArray(result) ? result : [];
+        setDemands(demandsArray);
+        setHasMore(demandsArray.length === PAGE_SIZE);
         setError('');
-      } catch (error) {
+      } catch {
         setError('Falha ao carregar demandas. Tente novamente mais tarde.');
       } finally {
         setIsLoading(false);
       }
     };
+
     fetchDemands();
   }, [storeUUID, page, statusFilter]);
 
@@ -77,16 +70,6 @@ const DemandsRetailerView = () => {
     return `${days}d ${hours}h ${minutes}min`;
   };
 
-  if (!storeUUID) {
-    return (
-      <Container maxWidth="sm" sx={{ mt: 4 }}>
-        <Typography variant="body1" color="error">
-          Erro: ID da loja não fornecido.
-        </Typography>
-      </Container>
-    );
-  }
-
   return (
     <Container maxWidth="sm" sx={{ mt: 4, mb: 8 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -94,16 +77,18 @@ const DemandsRetailerView = () => {
         <Typography variant="h6">Demandas da Loja 🛒</Typography>
       </Box>
 
-      {/* Status Filter */}
       <FormControl fullWidth size="small" sx={{ mb: 2 }}>
         <InputLabel id="status-filter-label">Filtrar por status</InputLabel>
         <Select
           labelId="status-filter-label"
           value={statusFilter}
           label="Filtrar por status"
-          onChange={(e) => setStatusFilter(e.target.value as any)}
+          onChange={(e) => {
+            setPage(1);
+            setStatusFilter(e.target.value as DemandStatus);
+          }}
         >
-          <MenuItem value="ALL">Todos</MenuItem>
+          <MenuItem value={DemandStatus.ANY}>Todos</MenuItem>
           <MenuItem value={DemandStatus.OPENED}>Aberto</MenuItem>
           <MenuItem value={DemandStatus.CANCELED}>Cancelado</MenuItem>
           <MenuItem value={DemandStatus.CLOSED}>Fechado</MenuItem>
@@ -111,14 +96,12 @@ const DemandsRetailerView = () => {
       </FormControl>
 
       {error ? (
-        <Typography variant="body1" color="error">
-          {error}
-        </Typography>
+        <Typography variant="body1" color="error">{error}</Typography>
       ) : isLoading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
           <CircularProgress />
         </Box>
-      ) : Array.isArray(demands) && demands.length > 0 ? (
+      ) : (
         <Paper elevation={1} sx={{ mt: 1, borderRadius: 2 }}>
           <List disablePadding>
             {demands.map((demand, index) => (
@@ -141,8 +124,8 @@ const DemandsRetailerView = () => {
                   }
                   secondary={
                     <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                      <Typography variant="caption">Total: {demand.needed_count || 'N/A'}</Typography>
-                      <Typography variant="caption">Entrega mínima: {demand.minimum_count || 'N/A'}</Typography>
+                      <Typography variant="caption">Total: {demand.needed_count}</Typography>
+                      <Typography variant="caption">Entrega mínima: {demand.minimum_count}</Typography>
                       <Typography variant="caption" sx={{ color: '#f57c00' }}>
                         Prazo em: {getCountdown(demand.deadline)}
                       </Typography>
@@ -162,19 +145,23 @@ const DemandsRetailerView = () => {
             ))}
           </List>
 
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
-            <Pagination
-              count={totalPages}
-              page={page}
-              onChange={(_, value) => setPage(value)}
-              color="primary"
-            />
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', px: 2, py: 2 }}>
+            <Button
+              variant="outlined"
+              disabled={page === 1}
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+            >
+              Anterior
+            </Button>
+            <Button
+              variant="outlined"
+              disabled={!hasMore}
+              onClick={() => setPage((prev) => prev + 1)}
+            >
+              Próximo
+            </Button>
           </Box>
         </Paper>
-      ) : (
-        <Typography variant="body2" color="text.secondary">
-          Nenhuma demanda encontrada para esta loja.
-        </Typography>
       )}
 
       <Fab

@@ -2,6 +2,7 @@ import DemandRequestModel from "../models/DemandRequestModel";
 import { ApiConnector } from "../utils/ApiConnector";
 import DemandResponseModel from '../models/DemandResposeModel';
 import { ProductType } from "../enums/ProductType";
+import { DemandStatus } from "../enums/DemandStatus";
 
 const api = new ApiConnector();
 
@@ -25,9 +26,9 @@ export async function update(demandUUID: string, demandData: DemandRequestModel)
     );
 }
 
-export async function listByStore(storeUUID: string, page: number = 1, pageSize: number = 100, radiusMeters: number = 10000, productType: ProductType = ProductType.ANY): Promise<Array<DemandResponseModel>> {
+export async function listByStore(storeUUID: string, page: number = 1, pageSize: number = 100, radiusMeters: number = 10000, productType: ProductType = ProductType.ANY, demandStatus: DemandStatus = DemandStatus.ANY): Promise<Array<DemandResponseModel>> {
     return await api.get<Array<DemandResponseModel>>(
-        `/demand/list-by-store?store_uuid=${storeUUID}&page=${page}&per_page=${pageSize}&radius_meters=${radiusMeters}&product_type=${productType}`,
+        `/demand/list-by-store?store_uuid=${storeUUID}&page=${page}&per_page=${pageSize}&radius_meters=${radiusMeters}&product_type=${productType}&status=${demandStatus}`,
         {
             'Content-Type': 'application/json',
         }
