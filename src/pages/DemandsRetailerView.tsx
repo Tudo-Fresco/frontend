@@ -9,24 +9,23 @@ import {
   List,
   ListItem,
   ListItemText,
-  IconButton,
   Pagination,
   Fab,
   Chip,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@mui/material';
-import {
-  Add as AddIcon,
-  Edit as EditIcon,
-  CheckCircleOutline as CloseIcon,
-} from '@mui/icons-material';
+import { Add as AddIcon } from '@mui/icons-material';
 import { listByStore } from '../services/DemandService';
 import { getDemandStatusDisplay, DemandStatus } from '../enums/DemandStatus';
 import ProfileMenu from '../components/ProfileMenu';
 
 const statusColorMap = {
-  [DemandStatus.OPENED]: 'success',
-  [DemandStatus.CLOSED]: 'error',
-  [DemandStatus.CANCELED]: 'default',
+  [DemandStatus.OPENED]: 'warning',   // under negotiation
+  [DemandStatus.CLOSED]: 'success',   // completed
+  [DemandStatus.CANCELED]: 'default', // already canceled
 };
 
 const DemandsRetailerView = () => {
@@ -37,7 +36,7 @@ const DemandsRetailerView = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [expandedDemandId, setExpandedDemandId] = useState(null);
+  const [statusFilter, setStatusFilter] = useState<DemandStatus | 'ALL'>('OPENED');
   const PAGE_SIZE = 10;
 
   useEffect(() => {
@@ -50,7 +49,12 @@ const DemandsRetailerView = () => {
       try {
         const result = await listByStore(storeUUID, page, PAGE_SIZE);
         const validResult = Array.isArray(result) ? result : [];
-        const filtered = validResult.filter((d) => d.status === DemandStatus.OPENED);
+
+        const filtered =
+          statusFilter === 'ALL'
+            ? validResult
+            : validResult.filter((d) => d.status === statusFilter);
+
         const sorted = filtered.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
         setDemands(sorted);
         setTotalPages(Math.ceil(filtered.length / PAGE_SIZE) || 1);
@@ -62,10 +66,10 @@ const DemandsRetailerView = () => {
       }
     };
     fetchDemands();
-  }, [storeUUID, page]);
+  }, [storeUUID, page, statusFilter]);
 
-  const getCountdown = (deadline) => {
-    const timeDiff = new Date(deadline) - new Date();
+  const getCountdown = (deadline: string) => {
+    const timeDiff = new Date(deadline).getTime() - new Date().getTime();
     if (timeDiff <= 0) return 'Prazo expirado';
     const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((timeDiff / (1000 * 60 * 60)) % 24);
@@ -90,6 +94,22 @@ const DemandsRetailerView = () => {
         <Typography variant="h6">Demandas da Loja 🛒</Typography>
       </Box>
 
+      {/* Status Filter */}
+      <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+        <InputLabel id="status-filter-label">Filtrar por status</InputLabel>
+        <Select
+          labelId="status-filter-label"
+          value={statusFilter}
+          label="Filtrar por status"
+          onChange={(e) => setStatusFilter(e.target.value as any)}
+        >
+          <MenuItem value="ALL">Todos</MenuItem>
+          <MenuItem value={DemandStatus.OPENED}>Aberto</MenuItem>
+          <MenuItem value={DemandStatus.CANCELED}>Cancelado</MenuItem>
+          <MenuItem value={DemandStatus.CLOSED}>Fechado</MenuItem>
+        </Select>
+      </FormControl>
+
       {error ? (
         <Typography variant="body1" color="error">
           {error}
@@ -106,9 +126,7 @@ const DemandsRetailerView = () => {
                 key={demand.id || demand.uuid || index}
                 divider
                 button
-                onClick={() =>
-                  setExpandedDemandId((prev) => (prev === demand.uuid ? null : demand.uuid))
-                }
+                onClick={() => navigate(`/demand/update/${storeUUID}/${demand.uuid}`)}
               >
                 <ListItemText
                   primary={
@@ -126,33 +144,17 @@ const DemandsRetailerView = () => {
                       <Typography variant="caption">Total: {demand.needed_count || 'N/A'}</Typography>
                       <Typography variant="caption">Entrega mínima: {demand.minimum_count || 'N/A'}</Typography>
                       <Typography variant="caption" sx={{ color: '#f57c00' }}>
-                        Prazo: {getCountdown(demand.deadline)}
+                        Prazo em: {getCountdown(demand.deadline)}
+                      </Typography>
+                      <Typography variant="caption">
+                        Prazo final: {new Date(demand.deadline).toLocaleString('pt-BR')}
                       </Typography>
                       <Chip
                         label={getDemandStatusDisplay(demand.status)}
                         color={statusColorMap[demand.status] || 'default'}
                         size="small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          console.log('Mostrar opção de desativação para', demand.uuid);
-                        }}
-                        sx={{ width: 'fit-content' }}
+                        sx={{ width: 'fit-content', mt: 1 }}
                       />
-                      {expandedDemandId === demand.uuid && (
-                        <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
-                          <IconButton
-                            edge="end"
-                            aria-label="editar"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`/demand/update/${storeUUID}/${demand.uuid}`);
-                            }}
-                            sx={{ mt: 1, alignSelf: 'flex-end' }}
-                          >
-                            <EditIcon fontSize="small" />
-                          </IconButton>
-                        </Box>
-                      )}
                     </Box>
                   }
                 />

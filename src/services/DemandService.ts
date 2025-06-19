@@ -35,7 +35,6 @@ export async function listByStore(storeUUID: string, page: number = 1, pageSize:
 }
 
 export async function getByUUID(demandUUID: string, storeUUID: string): Promise<DemandResponseModel> {
-    console.log('CHEGOU NO SERVICE PELO MENOS MEU NOBRE')
     return await api.get<DemandResponseModel>(
         `/demand/by-uuid/${demandUUID}?store_uuid=${storeUUID}`,
         {

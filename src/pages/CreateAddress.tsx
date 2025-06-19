@@ -5,13 +5,14 @@ import { freshFill } from '../services/AddressService';
 import ErrorBanner from '../components/ErrorBanner';
 import AddressRequestModel from '../models/AddressRequestModel';
 import AddressResponseModel from '../models/AddressResponseModel';
-import ProfileMenu from '../components/ProfileMenu';
+import { useNavigate } from 'react-router-dom';
 
 interface CreateAddressProps {
   onAddressSubmit: (addressData: AddressRequestModel) => void;
 }
 
 const CreateAddress: React.FC<CreateAddressProps> = ({ onAddressSubmit }) => {
+  const navigate = useNavigate();
   const [addressData, setAddressData] = useState<AddressRequestModel>({
     zip_code: '',
     street_address: '',
@@ -192,15 +193,18 @@ const CreateAddress: React.FC<CreateAddressProps> = ({ onAddressSubmit }) => {
           onChange={handleChange}
           disabled={isFreshFillLoading || !isCepFound}
         />
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          type="submit"
-          disabled={isFreshFillLoading || !isCepFound}
-        >
-          Continuar
-        </Button>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+          <Button onClick={() => navigate(-1)}>Cancelar</Button>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            type="submit"
+            disabled={isFreshFillLoading || !isCepFound}
+          >
+            Continuar
+          </Button>
+        </Box>
       </Box>
     </Container>
   );

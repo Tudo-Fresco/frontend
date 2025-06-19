@@ -207,10 +207,12 @@ const CreateDemand: React.FC = () => {
           required
           fullWidth
         />
-
-        <Button type="submit" variant="contained" color="primary" fullWidth>
-          Criar Demanda
-        </Button>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+          <Button onClick={() => navigate(-1)}>Cancelar</Button>
+          <Button type="submit" variant="contained" color="primary">
+            Criar Demanda
+          </Button>
+        </Box>
       </Box>
 
       <Snackbar open={showSuccess} autoHideDuration={3000}>
