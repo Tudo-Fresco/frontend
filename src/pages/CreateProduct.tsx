@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -8,7 +8,7 @@ import {
   CircularProgress,
   MenuItem,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { create } from '../services/ProductService';
 import { UnitType, unitTypeDisplayMap } from '../enums/UnitType';
 import { ProductType, productTypeDisplayMap } from '../enums/ProductType';
@@ -17,33 +17,38 @@ import ErrorBanner from '../components/ErrorBanner';
 import ProfileMenu from '../components/ProfileMenu';
 
 const CreateProduct: React.FC = () => {
-  const [name, setName] = useState('');
+  const [searchParams] = useSearchParams();
+  const initialName = searchParams.get('name') || '';
+
+  const [name, setName] = useState(initialName);
   const [unitType, setUnitType] = useState<UnitType>(UnitType.PIECE);
   const [productType, setProductType] = useState<ProductType>(ProductType.VEGETABLE);
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
-  const [disableForm, setDisableForm] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleSuccessFinished = () => {
-    navigate('/retailer');
+  useEffect(() => {
+    setName(initialName);
+  }, [initialName]);
+
+  const returnToCreateDemand = () => {
+    navigate(-1);
   };
 
-  const resetFormValues = () => {
-    setName('');
-    setUnitType(UnitType.KILOGRAM);
-    setProductType(ProductType.VEGETABLE);
+  const handleSuccessFinished = () => {
+    returnToCreateDemand();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    setLoading(true);
+    setErrorMessage('');
+
     try {
-      setLoading(true);
-      setDisableForm(true);
       await create({
         name,
         unit_type: unitType,
@@ -57,15 +62,15 @@ const CreateProduct: React.FC = () => {
 
       setSuccessMessage('Produto cadastrado com sucesso!');
       setShowSuccess(true);
-      setLoading(false);
     } catch (err: any) {
-      setDisableForm(false);
-      setLoading(false);
-      resetFormValues();
-      console.error(err);
       setErrorMessage(err?.response?.data?.message || 'Erro ao criar produto.');
+    } finally {
+      setLoading(false);
     }
   };
+
+  // Disable form while loading or showing success banner
+  const disableForm = loading || showSuccess;
 
   return (
     <Container maxWidth="sm">
@@ -79,7 +84,6 @@ const CreateProduct: React.FC = () => {
           Cadastrar Produto
         </Typography>
 
-        {/* ✅ Success feedback */}
         <SuccessBanner
           message={successMessage}
           open={showSuccess}
@@ -139,10 +143,21 @@ const CreateProduct: React.FC = () => {
               </MenuItem>
             ))}
           </TextField>
-          {loading && <CircularProgress size={24} sx={{ alignSelf: 'center' }} />}
-          <Button variant="contained" color="primary" type="submit" disabled={!name || loading}>
-            Salvar Produto
-          </Button>
+
+          {loading && (
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <CircularProgress size={24} />
+            </Box>
+          )}
+
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+            <Button onClick={() => navigate(-1)} disabled={disableForm}>
+              Cancelar
+            </Button>
+            <Button variant="contained" color="primary" type="submit" disabled={!name || disableForm}>
+              {loading ? <CircularProgress size={24} color="inherit" /> : 'Salvar Produto'}
+            </Button>
+          </Box>
         </fieldset>
       </Box>
     </Container>
