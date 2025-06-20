@@ -14,6 +14,7 @@ import { getByUUID, update } from '../services/DemandService';
 import { DemandStatus, demandStatusDisplayMap } from '../enums/DemandStatus';
 import DemandRequestModel from '../models/DemandRequestModel';
 import DemandResponseModel from '../models/DemandResposeModel';
+import Header from '../components/Header';
 
 const UpdateDemand = () => {
   const { storeUUID, demandUUID } = useParams();
@@ -87,6 +88,7 @@ const UpdateDemand = () => {
 
   return (
     <Container maxWidth="sm" sx={{ mt: 4 }}>
+      <Header />
       <Paper sx={{ p: 3, borderRadius: 2 }}>
         <Typography variant="h6" gutterBottom>
           Atualizar Demanda

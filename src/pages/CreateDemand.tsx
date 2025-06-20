@@ -17,9 +17,9 @@ import { decodeToken } from '../services/TokenService';
 import DemandRequestModel from '../models/DemandRequestModel';
 import ProductResponseModel from '../models/ProductResponseModel';
 import { DemandStatus } from '../enums/DemandStatus';
-import ProfileMenu from '../components/ProfileMenu';
 import SuccessBanner from '../components/SuccessBanner';   // <-- import success banner
 import ErrorBanner from '../components/ErrorBanner';       // <-- import error banner
+import Header from '../components/Header';
 
 const filter = createFilterOptions<
   ProductResponseModel | { inputValue: string; isNew: boolean }
@@ -109,7 +109,7 @@ const CreateDemand: React.FC = () => {
         onSubmit={handleSubmit}
         sx={{ mt: 4, display: 'flex', flexDirection: 'column', gap: 2 }}
       >
-        <ProfileMenu />
+        <Header />
         <Typography variant="h6" textAlign="center">
           Criar Nova Demanda 📦
         </Typography>

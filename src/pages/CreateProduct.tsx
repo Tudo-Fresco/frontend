@@ -14,7 +14,7 @@ import { UnitType, unitTypeDisplayMap } from '../enums/UnitType';
 import { ProductType, productTypeDisplayMap } from '../enums/ProductType';
 import SuccessBanner from '../components/SuccessBanner';
 import ErrorBanner from '../components/ErrorBanner';
-import ProfileMenu from '../components/ProfileMenu';
+import Header from '../components/Header';
 
 const CreateProduct: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -79,7 +79,7 @@ const CreateProduct: React.FC = () => {
         onSubmit={handleSubmit}
         sx={{ mt: 4, display: 'flex', flexDirection: 'column', gap: 2 }}
       >
-        <ProfileMenu />
+        <Header />
         <Typography variant="h6" textAlign="center">
           Cadastrar Produto
         </Typography>

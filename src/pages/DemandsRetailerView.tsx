@@ -20,7 +20,8 @@ import {
 import { Add as AddIcon } from '@mui/icons-material';
 import { listByStore } from '../services/DemandService';
 import { getDemandStatusDisplay, DemandStatus } from '../enums/DemandStatus';
-import ProfileMenu from '../components/ProfileMenu';
+import Header from '../components/Header';
+
 
 const statusColorMap = {
   [DemandStatus.OPENED]: 'warning',
@@ -71,108 +72,106 @@ const DemandsRetailerView = () => {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4, mb: 8 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <ProfileMenu />
-        <Typography variant="h6">Demandas da Loja 🛒</Typography>
-      </Box>
+    <Box>
+      <Header/>
+      <Container maxWidth="sm" sx={{ mt: '80px', mb: 8 }}>
+        <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+          <InputLabel id="status-filter-label">Filtrar por status</InputLabel>
+          <Select
+            labelId="status-filter-label"
+            value={statusFilter}
+            label="Filtrar por status"
+            onChange={(e) => {
+              setPage(1);
+              setStatusFilter(e.target.value as DemandStatus);
+            }}
+          >
+            <MenuItem value={DemandStatus.ANY}>Todos</MenuItem>
+            <MenuItem value={DemandStatus.OPENED}>Aberto</MenuItem>
+            <MenuItem value={DemandStatus.CANCELED}>Cancelado</MenuItem>
+            <MenuItem value={DemandStatus.CLOSED}>Fechado</MenuItem>
+          </Select>
+        </FormControl>
 
-      <FormControl fullWidth size="small" sx={{ mb: 2 }}>
-        <InputLabel id="status-filter-label">Filtrar por status</InputLabel>
-        <Select
-          labelId="status-filter-label"
-          value={statusFilter}
-          label="Filtrar por status"
-          onChange={(e) => {
-            setPage(1);
-            setStatusFilter(e.target.value as DemandStatus);
-          }}
-        >
-          <MenuItem value={DemandStatus.ANY}>Todos</MenuItem>
-          <MenuItem value={DemandStatus.OPENED}>Aberto</MenuItem>
-          <MenuItem value={DemandStatus.CANCELED}>Cancelado</MenuItem>
-          <MenuItem value={DemandStatus.CLOSED}>Fechado</MenuItem>
-        </Select>
-      </FormControl>
-
-      {error ? (
-        <Typography variant="body1" color="error">{error}</Typography>
-      ) : isLoading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-          <CircularProgress />
-        </Box>
-      ) : (
-        <Paper elevation={1} sx={{ mt: 1, borderRadius: 2 }}>
-          <List disablePadding>
-            {demands.map((demand, index) => (
-              <ListItem
-                key={demand.id || demand.uuid || index}
-                divider
-                button
-                onClick={() => navigate(`/demand/update/${storeUUID}/${demand.uuid}`)}
-              >
-                <ListItemText
-                  primary={
-                    <>
-                      <Typography variant="subtitle1" fontWeight={700}>
-                        {demand.product?.name || 'Produto desconhecido'}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {demand.description || 'Sem descrição'}
-                      </Typography>
-                    </>
-                  }
-                  secondary={
-                    <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                      <Typography variant="caption">Total: {demand.needed_count}</Typography>
-                      <Typography variant="caption">Entrega mínima: {demand.minimum_count}</Typography>
-                      <Typography variant="caption" sx={{ color: '#f57c00' }}>
-                        Prazo em: {getCountdown(demand.deadline)}
-                      </Typography>
-                      <Typography variant="caption">
-                        Prazo final: {new Date(demand.deadline).toLocaleString('pt-BR')}
-                      </Typography>
-                      <Chip
-                        label={getDemandStatusDisplay(demand.status)}
-                        color={statusColorMap[demand.status] || 'default'}
-                        size="small"
-                        sx={{ width: 'fit-content', mt: 1 }}
-                      />
-                    </Box>
-                  }
-                />
-              </ListItem>
-            ))}
-          </List>
-
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', px: 2, py: 2 }}>
-            <Button
-              variant="outlined"
-              disabled={page === 1}
-              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-            >
-              Anterior
-            </Button>
-            <Button
-              variant="outlined"
-              disabled={!hasMore}
-              onClick={() => setPage((prev) => prev + 1)}
-            >
-              Próximo
-            </Button>
+        {error ? (
+          <Typography variant="body1" color="error">{error}</Typography>
+        ) : isLoading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+            <CircularProgress />
           </Box>
-        </Paper>
-      )}
+        ) : (
+          <Paper elevation={1} sx={{ mt: 1, borderRadius: 2 }}>
+            <List disablePadding>
+              {demands.map((demand, index) => (
+                <ListItem
+                  key={demand.id || demand.uuid || index}
+                  divider
+                  button
+                  onClick={() => navigate(`/demand/update/${storeUUID}/${demand.uuid}`)}
+                >
+                  <ListItemText
+                    primary={
+                      <>
+                        <Typography variant="subtitle1" fontWeight={700}>
+                          {demand.product?.name || 'Produto desconhecido'}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {demand.description || 'Sem descrição'}
+                        </Typography>
+                      </>
+                    }
+                    secondary={
+                      <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                        <Typography variant="caption">Total: {demand.needed_count}</Typography>
+                        <Typography variant="caption">Entrega mínima: {demand.minimum_count}</Typography>
+                        <Typography variant="caption" sx={{ color: '#f57c00' }}>
+                          Prazo em: {getCountdown(demand.deadline)}
+                        </Typography>
+                        <Typography variant="caption">
+                          Prazo final: {new Date(demand.deadline).toLocaleString('pt-BR')}
+                        </Typography>
+                        <Chip
+                          label={getDemandStatusDisplay(demand.status)}
+                          color={statusColorMap[demand.status] || 'default'}
+                          size="small"
+                          sx={{ width: 'fit-content', mt: 1 }}
+                        />
+                      </Box>
+                    }
+                  />
+                </ListItem>
+              ))}
+            </List>
 
-      <Fab
-        color="primary"
-        aria-label="nova demanda"
-        onClick={() => storeUUID && navigate(`/demand/${storeUUID}`)}
-        sx={{ position: 'fixed', bottom: 24, right: 24 }}
-      >
-        <AddIcon />
-      </Fab>
-    </Container>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', px: 2, py: 2 }}>
+              <Button
+                variant="outlined"
+                disabled={page === 1}
+                onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              >
+                Anterior
+              </Button>
+              <Button
+                variant="outlined"
+                disabled={!hasMore}
+                onClick={() => setPage((prev) => prev + 1)}
+              >
+                Próximo
+              </Button>
+            </Box>
+          </Paper>
+        )}
+
+        <Fab
+          color="primary"
+          aria-label="nova demanda"
+          onClick={() => storeUUID && navigate(`/demand/${storeUUID}`)}
+          sx={{ position: 'fixed', bottom: 24, right: 24 }}
+        >
+          <AddIcon />
+        </Fab>
+      </Container>
+    </Box>
   );
 };
 

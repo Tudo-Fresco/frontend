@@ -11,12 +11,11 @@ import {
 } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import Logo from '../components/Logo';
 import { listByUser } from '../services/StoreService';
 import { StoreResponseModel } from '../models/StoreResponseModel';
 import { getStoreTypeDisplay, StoreType } from '../enums/StoreType';
 import ErrorBanner from '../components/ErrorBanner';
-import ProfileMenu from '../components/ProfileMenu';
+import Header from '../components/Header';
 
 const MyStores = () => {
   const navigate = useNavigate();
@@ -55,7 +54,7 @@ const MyStores = () => {
     if (selectedStore.store_type === StoreType.RETAILER) {
       navigate(`/demands-retailer/${selectedStoreUuid}`);
     } else {
-      navigate(`/dashboard/${selectedStoreUuid}`);
+      navigate(`/reel/posts/${selectedStoreUuid}`);
     }
   };
 
@@ -135,12 +134,8 @@ const MyStores = () => {
           py: 2,
         }}
       >
-        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-          <Logo />
-        </Box>
-
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <ProfileMenu />
+          <Header />
           <Typography variant="subtitle1" color="text.secondary">
             Minhas Lojas 🏬
           </Typography>

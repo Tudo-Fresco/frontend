@@ -1,6 +1,6 @@
 import { Container, Typography, Button, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
-import Logo from '../components/Logo';
+import Header from '../components/Header';
 
 const NotFound = () => {
   return (
@@ -15,9 +15,7 @@ const NotFound = () => {
         textAlign: 'center',
       }}
     >
-      <Box sx={{ mb: 4 }}>
-        <Logo />
-      </Box>
+      <Header />
 
       <Typography variant="h3" component="h1" gutterBottom>
         404

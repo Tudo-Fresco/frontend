@@ -49,11 +49,11 @@ const Login = () => {
         }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-          <Logo />
+          <Logo size={177} />
         </Box>
 
         <Typography variant="subtitle1" textAlign="center" color="text.secondary">
-          Login to connect producers and buyers 🌱
+          Direto do produtor para seu negócio
         </Typography>
 
         <ErrorBanner

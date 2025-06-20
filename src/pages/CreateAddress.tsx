@@ -6,6 +6,7 @@ import ErrorBanner from '../components/ErrorBanner';
 import AddressRequestModel from '../models/AddressRequestModel';
 import AddressResponseModel from '../models/AddressResponseModel';
 import { useNavigate } from 'react-router-dom';
+import Header from '../components/Header';
 
 interface CreateAddressProps {
   onAddressSubmit: (addressData: AddressRequestModel) => void;
@@ -111,6 +112,8 @@ const CreateAddress: React.FC<CreateAddressProps> = ({ onAddressSubmit }) => {
           gap: 2,
         }}
       >
+        <Header />
+
         <Typography variant="subtitle1" textAlign="center" color="text.secondary">
           Cadastre o endereço da sua empresa 📍
         </Typography>

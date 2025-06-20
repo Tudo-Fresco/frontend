@@ -162,11 +162,11 @@ const Register = () => {
         }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-          <Logo />
+          <Logo size={120}/>
         </Box>
 
         <Typography variant="subtitle1" textAlign="center" color="text.secondary">
-          Cadastre-se para conectar produtores e compradores 🌱
+          Cadastre-se para conectar produtores e compradores
         </Typography>
 
         <ErrorBanner
