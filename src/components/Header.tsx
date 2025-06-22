@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, IconButton, Menu, MenuItem } from '@mui/material';
+import { Box, IconButton, Menu, MenuItem, useTheme, useMediaQuery } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate } from 'react-router-dom';
 import Logo from './Logo';
@@ -7,6 +7,8 @@ import ProfileMenu from './ProfileMenu';
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -32,11 +34,10 @@ const Header: React.FC = () => {
       component="header"
       sx={{
         width: '100%',
-        height: 64,
-        px: 2,
+        height: { xs: 64, sm: 72, md: 77 },
+        px: { xs: 1, sm: 2 },
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
         position: 'fixed',
         top: 0,
         left: 0,
@@ -46,29 +47,34 @@ const Header: React.FC = () => {
         boxSizing: 'border-box',
       }}
     >
-      <Box>
-        <IconButton edge="start" onClick={handleMenuClick}>
-          <MenuIcon />
-        </IconButton>
-        <Menu
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+      <Box sx={{ width: 60, display: 'flex', alignItems: 'center' }}>
+        <IconButton
+          edge="start"
+          onClick={handleMenuClick}
+          size={isMobile ? 'small' : 'medium'}
         >
-          <MenuItem onClick={handleNavigateToStores}>Minhas lojas</MenuItem>
-          <MenuItem onClick={handleGoBack}>Página anterior</MenuItem>
-        </Menu>
+          <MenuIcon fontSize={isMobile ? 'small' : 'medium'} />
+        </IconButton>
       </Box>
 
-      <Box sx={{ flexGrow: 1, textAlign: 'center' }}>
-        <Logo />
+      <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
+        <Logo size={isMobile ? 65 : 80} />
       </Box>
 
-      <Box sx={{ pl: 1 }}>
+      <Box sx={{ width: 60, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
         <ProfileMenu />
       </Box>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+      >
+        <MenuItem onClick={handleNavigateToStores}>Minhas lojas</MenuItem>
+        <MenuItem onClick={handleGoBack}>Página anterior</MenuItem>
+      </Menu>
     </Box>
   );
 };

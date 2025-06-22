@@ -22,7 +22,7 @@ const PostCard = ({ post }: Props) => {
       sx={{
         borderRadius: 3,
         overflow: 'hidden',
-        backgroundColor: '#000',
+        backgroundColor: '#ffff',
       }}
     >
       <Box
@@ -67,7 +67,7 @@ const PostCard = ({ post }: Props) => {
         )}
       </Box>
 
-      <Box sx={{ p: 2, backgroundColor: '#fff' }}>
+      <Box sx={{ p: 2, backgroundColor: '#e8f5e9' }}>
         <Typography variant="subtitle1" fontWeight={600}>
           {post.product.name}
         </Typography>
