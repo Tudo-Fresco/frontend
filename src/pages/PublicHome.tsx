@@ -37,7 +37,7 @@ const PublicHome = () => {
             position: 'relative',
             zIndex: 2,
             px: 3,
-            background: 'rgba(231, 255, 211, 0.65)',
+            background: 'rgba(255, 255, 255, 0.16)',
             py: 5,
             borderRadius: 3,
             backdropFilter: 'blur(6px)',
@@ -60,7 +60,7 @@ const PublicHome = () => {
               display: 'block',
             }}
           />
-          <Typography variant={isMobile ? 'body1' : 'h5'} mt={1} color="text.secondary">
+          <Typography variant={isMobile ? 'body1' : 'h5'} mt={1} color="white">
             Direto do produtor para seu negócio
           </Typography>
           <Button

@@ -48,3 +48,13 @@ export function decodeToken(): TokenContent | null {
       return null;
   }
 }
+
+export function isTokenExpired(): boolean {
+    const tokenContent = decodeToken();
+    if (!tokenContent) return true;
+  
+    const now = new Date().getTime();
+    const expiration = tokenContent.exp * 1000;
+  
+    return expiration <= now;
+  }

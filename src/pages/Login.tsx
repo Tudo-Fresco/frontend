@@ -1,29 +1,49 @@
-import React, { useState } from 'react';
-import { Box, Button, Container, TextField, Typography, Link, CircularProgress, InputAdornment, IconButton } from '@mui/material';
-import Logo from '../components/Logo';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../services/AuthService';
+import {
+  Box,
+  Button,
+  Container,
+  TextField,
+  Typography,
+  Link,
+  CircularProgress,
+  InputAdornment,
+  IconButton,
+} from '@mui/material';
+import Logo from '../components/Logo';
 import ErrorBanner from '../components/ErrorBanner';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Visibility from '@mui/icons-material/Visibility';
+import { token_is_valid, login } from '../services/AuthService';
 
 const Login = () => {
   const navigate = useNavigate();
+  const [checkingToken, setCheckingToken] = useState(true); // ✅ novo estado
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [showError, setShowError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
-  
+
+  // ✅ Executa a verificação com segurança
+  useEffect(() => {
+    if (token_is_valid()) {
+      navigate('/my-stores');
+    } else {
+      setCheckingToken(false); // agora sim libera a renderização
+    }
+  }, []);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setShowError(false);
     setIsLoading(true);
-
+  
     try {
       await login(username, password);
-      navigate('/my-stores');
+      window.location.href = '/my-stores';
     } catch (err: any) {
       setError(err.message ?? 'O Login falhou');
       setShowError(true);
@@ -31,32 +51,34 @@ const Login = () => {
       setIsLoading(false);
     }
   };
-
-  const handleTogglePasswordConfirmation = () => {
-    setShowPasswordConfirmation((prev) => !prev);
-  };
   
+  const handleTogglePasswordConfirmation = () =>
+    setShowPasswordConfirmation((prev) => !prev);
+
+  // ✅ Enquanto estiver verificando o token, mostra só loading
+  if (checkingToken) {
+    return (
+      <Container
+        maxWidth="xs"
+        sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      >
+        <CircularProgress />
+      </Container>
+    );
+  }
+
   return (
-    <Container maxWidth="xs" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center'}}>
+    <Container maxWidth="xs" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
       <Box
         component="form"
         onSubmit={handleLogin}
-        sx={{
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 2,
-        }}
+        sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
           <Logo size={177} />
         </Box>
 
-        <ErrorBanner
-          message={error}
-          open={showError}
-          onClose={() => setShowError(false)}
-        />
+        <ErrorBanner message={error} open={showError} onClose={() => setShowError(false)} />
 
         <TextField
           label="Username"
@@ -70,7 +92,7 @@ const Login = () => {
 
         <TextField
           label="Password"
-          type={showPasswordConfirmation ? "text" : "password"}
+          type={showPasswordConfirmation ? 'text' : 'password'}
           fullWidth
           required
           value={password}

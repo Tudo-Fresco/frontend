@@ -1,7 +1,7 @@
 import { UserAccess } from '../enums/UserAccess';
 import { LoginResponse } from '../models/LoginResponse';
 import { ApiConnector } from '../utils/ApiConnector';
-import { setToken, decodeToken } from './TokenService';
+import { setToken, decodeToken, isTokenExpired } from './TokenService';
 
 const api = new ApiConnector();
 
@@ -45,4 +45,10 @@ export function getUserId(): string | null {
     return tokenContent.sub;
   }
   return null;
+}
+
+
+export function token_is_valid(): boolean {
+  const token = decodeToken();
+  return !! token && !isTokenExpired();
 }
