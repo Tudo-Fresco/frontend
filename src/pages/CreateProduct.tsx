@@ -95,6 +95,7 @@ const CreateProduct: React.FC = () => {
       await uploadProductImage(createdProductUuid, selectedFile);
       setUploadSuccess(true);
       setShowUploadDialog(false);
+      navigate(-1);
     } catch (err: any) {
       setUploadError(err?.response?.data?.message || 'Erro ao enviar imagem.');
     } finally {
@@ -180,7 +181,10 @@ const CreateProduct: React.FC = () => {
           )}
 
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-            <Button onClick={() => navigate(-1)} disabled={disableForm}>
+            <Button
+              onClick={() => navigate(-1)}
+              disabled={disableForm}
+            >
               Cancelar
             </Button>
             <Button
@@ -195,11 +199,13 @@ const CreateProduct: React.FC = () => {
         </fieldset>
       </Box>
 
-      {/* Upload image dialog */}
       <Dialog
         open={showUploadDialog}
         onClose={() => {
-          if (!uploading) setShowUploadDialog(false);
+          if (!uploading) {
+            setShowUploadDialog(false);
+            navigate(-1);
+          }
         }}
         fullWidth
         maxWidth="xs"
@@ -261,10 +267,16 @@ const CreateProduct: React.FC = () => {
           )}
         </DialogContent>
 
-        <DialogActions
-          sx={{ justifyContent: 'space-between', px: 2, pb: 2 }}
-        >
-          <Button onClick={() => setShowUploadDialog(false)} disabled={uploading}>
+        <DialogActions sx={{ justifyContent: 'space-between', px: 2, pb: 2 }}>
+          <Button
+            onClick={() => {
+              if (!uploading) {
+                setShowUploadDialog(false);
+                navigate(-1);
+              }
+            }}
+            disabled={uploading}
+          >
             Cancelar
           </Button>
           <Button
