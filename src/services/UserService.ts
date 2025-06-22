@@ -30,3 +30,9 @@ export async function getSignedProfilePictureUrl(): Promise<string> {
     }
   );
 }
+
+export async function uploadProfilePicture(file: File): Promise<void> {
+  const formData = new FormData();
+  formData.append('file', file);
+  await api.post<void>('/user/profile-picture', formData);
+}

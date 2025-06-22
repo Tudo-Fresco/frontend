@@ -15,6 +15,7 @@ import CreateDemand from './pages/CreateDemand';
 import DemandsRetailerView from './pages/DemandsRetailerView';
 import UpdateDemand from './pages/UpdateDemand';
 import PostsSupplierView from './pages/PostsSupplierView';
+import UpdateUserProfile from './pages/UpdateUserProfile';
 
 const App = () => {
   return (
@@ -30,6 +31,7 @@ const App = () => {
               <Route path="/demand/:storeUUID" element={<CreateDemand />} />
               <Route path="/store" element={<CreateStore />} />
               <Route path="/my-stores" element={<MyStores />} />
+              <Route path="/profile" element={<UpdateUserProfile />} />
               <Route path="/product" element={<CreateProduct />} />
               <Route path="/demands-retailer/:storeUUID" element={<DemandsRetailerView />} />
               <Route path="/reel/posts/:storeUUID" element={<PostsSupplierView />} />
