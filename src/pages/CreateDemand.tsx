@@ -110,8 +110,16 @@ const CreateDemand: React.FC = () => {
         sx={{ mt: 4, display: 'flex', flexDirection: 'column', gap: 2 }}
       >
         <Header />
-        <Typography variant="h6" textAlign="center">
-          Criar Nova Demanda 📦
+
+        <Typography
+
+        variant="h9"
+        fontWeight={100}
+        color="text.primary"
+        align="center"
+        sx={{ mt: 2 }}
+          >
+            Nova demanda
         </Typography>
 
         <fieldset

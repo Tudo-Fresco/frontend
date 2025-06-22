@@ -65,13 +65,17 @@ export class ApiConnector {
   }
 
   public async post<T>(endpoint: string, body: BodyInit, headers: HeadersInit = {}): Promise<T> {
+    if (body instanceof FormData) {
+      const { 'Content-Type': _, ...restHeaders } = headers as Record<string, string>;
+      headers = restHeaders;
+    }
     return this.fetchWithHandling<T>(`${this.baseUrl}${endpoint}`, {
       method: 'POST',
       headers: this.addAuthorizationHeader(headers),
       body,
     });
   }
-
+  
   public async put<T>(endpoint: string, body: BodyInit, headers: HeadersInit = {}): Promise<T> {
     return this.fetchWithHandling<T>(`${this.baseUrl}${endpoint}`, {
       method: 'PUT',
