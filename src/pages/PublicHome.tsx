@@ -93,8 +93,8 @@ const PublicHome = () => {
       <Typography variant="h5" fontWeight={600} gutterBottom>
         Fale com a gente
       </Typography>
-      <Typography variant="body1">Email: contato@tudofresco.com</Typography>
-      <Typography variant="body1">Telefone: (48) 99999-9999</Typography>
+      <Typography variant="body1">Email: gbrl.volt@gmail.com</Typography>
+      <Typography variant="body1">Telefone: + 55 (47) 99771-3715</Typography>
       <Typography variant="body1">Instagram: @tudofresco</Typography>
     </Box>
       <Box

@@ -98,7 +98,7 @@ const MyStores = () => {
             }}
           >
             <CardContent>
-              <Typography variant="h6" component="div">
+              <Typography variant="h7" component="div">
                 {store.legal_name}
               </Typography>
               <Typography variant="body2" color="text.secondary">
@@ -134,12 +134,17 @@ const MyStores = () => {
           py: 2,
         }}
       >
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Header />
-          <Typography variant="subtitle1" color="text.secondary">
-            Minhas Lojas 🏬
-          </Typography>
-        </Box>
+      <Header/>
+      
+      <Typography
+        variant="h9"
+        fontWeight={100}
+        color="text.primary"
+        align="center"
+        sx={{ mt: 2 }}
+      >
+        Escolha uma loja para prosseguir
+     </Typography>
 
         <ErrorBanner
           message={error}

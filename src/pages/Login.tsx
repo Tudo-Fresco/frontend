@@ -37,7 +37,7 @@ const Login = () => {
   };
   
   return (
-    <Container maxWidth="xs" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+    <Container maxWidth="xs" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center'}}>
       <Box
         component="form"
         onSubmit={handleLogin}
