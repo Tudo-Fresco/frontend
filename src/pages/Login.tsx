@@ -52,10 +52,6 @@ const Login = () => {
           <Logo size={177} />
         </Box>
 
-        <Typography variant="subtitle1" textAlign="center" color="text.secondary">
-          Direto do produtor para seu negócio
-        </Typography>
-
         <ErrorBanner
           message={error}
           open={showError}
