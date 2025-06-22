@@ -17,13 +17,51 @@ import { decodeToken } from '../services/TokenService';
 import DemandRequestModel from '../models/DemandRequestModel';
 import ProductResponseModel from '../models/ProductResponseModel';
 import { DemandStatus } from '../enums/DemandStatus';
-import SuccessBanner from '../components/SuccessBanner';   // <-- import success banner
-import ErrorBanner from '../components/ErrorBanner';       // <-- import error banner
+import { ProductType } from '../enums/ProductType';
+import SuccessBanner from '../components/SuccessBanner';
+import ErrorBanner from '../components/ErrorBanner';
 import Header from '../components/Header';
 
 const filter = createFilterOptions<
   ProductResponseModel | { inputValue: string; isNew: boolean }
 >();
+
+const getDescriptionPlaceholderByProductType = (type: ProductType | undefined): string => {
+  switch (type) {
+    case ProductType.VEGETABLE:
+    case ProductType.ROOT_VEGETABLE:
+      return 'Ex: Preferência por entregas matinais para manter os vegetais frescos.';
+    case ProductType.FRUIT:
+      return 'Ex: Frutas maduras, se possível entregues semanalmente.';
+    case ProductType.EGG:
+      return 'Ex: Ovos caipiras com validade mínima de 7 dias.';
+    case ProductType.DAIRY:
+      return 'Ex: Laticínios devem ser refrigerados e entregues em até 24h.';
+    case ProductType.BEEF:
+    case ProductType.PORK:
+    case ProductType.WHITE_MEAT:
+      return 'Ex: Cortes embalados a vácuo, entregues sob refrigeração.';
+    case ProductType.SEAFOOD:
+    case ProductType.SEAWEED:
+      return 'Ex: Entrega com isopor e gelo para preservar o frescor.';
+    case ProductType.SPICE:
+    case ProductType.HERB:
+      return 'Ex: Embalagem hermética para preservar aroma e frescor.';
+    case ProductType.NUT:
+      return 'Ex: Castanhas cruas ou torradas, sem sal.';
+    case ProductType.GRAIN:
+      return 'Ex: Preferência por grãos a granel ou embalagens sustentáveis.';
+    case ProductType.MUSHROOM:
+      return 'Ex: Cogumelos frescos, colhidos no mesmo dia da entrega.';
+    case ProductType.PROCESSED_MEAT:
+    case ProductType.PRESERVED_MEAT:
+    case ProductType.PRESERVED_PRODUCT:
+      return 'Ex: Produtos com validade mínima de 15 dias e bem lacrados.';
+    case ProductType.ANY:
+    default:
+      return 'Ex: Preferir por entregas matinais, para manter os produtos frescos.';
+  }
+};
 
 const CreateDemand: React.FC = () => {
   const { storeUUID } = useParams<{ storeUUID: string }>();
@@ -47,9 +85,8 @@ const CreateDemand: React.FC = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  
-  const [disableForm, setDisableForm] = useState(false); // <-- lock form inputs while submitting
-  const [loading, setLoading] = useState(false);         // <-- loading spinner for submit button
+  const [disableForm, setDisableForm] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleProductSearch = async (term: string) => {
     setIsSearching(true);
@@ -112,49 +149,49 @@ const CreateDemand: React.FC = () => {
         <Header />
 
         <Typography
-
-        variant="h9"
-        fontWeight={100}
-        color="text.primary"
-        align="center"
-        sx={{ mt: 2 }}
-          >
-            Nova demanda
+          variant="h9"
+          fontWeight={100}
+          color="text.primary"
+          align="center"
+          sx={{ mt: 2 }}
+        >
+          Nova demanda
         </Typography>
 
         <fieldset
           disabled={disableForm}
-          style={{ border: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}
+          style={{
+            border: 'none',
+            padding: 0,
+            margin: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px',
+          }}
         >
           <Autocomplete
             freeSolo
             options={products}
             filterOptions={(options, params) => {
               const filtered = filter(options, params);
-
               const { inputValue } = params;
               const isExisting = options.some(
                 (option) =>
                   'search_name' in option &&
                   option.search_name.toLowerCase() === inputValue.toLowerCase()
               );
-
               if (inputValue !== '' && !isExisting) {
                 filtered.push({
                   inputValue,
                   isNew: true,
                 } as any);
               }
-
               return filtered;
             }}
             getOptionLabel={(option) => {
-              if (typeof option === 'string') {
-                return option;
-              }
-              if ('isNew' in option && option.isNew) {
+              if (typeof option === 'string') return option;
+              if ('isNew' in option && option.isNew)
                 return `Cadastrar novo produto "${option.inputValue}"`;
-              }
               return option.search_name;
             }}
             loading={isSearching}
@@ -169,7 +206,14 @@ const CreateDemand: React.FC = () => {
             renderOption={(props, option) => {
               if (typeof option !== 'string' && 'isNew' in option && option.isNew) {
                 return (
-                  <li {...props} style={{ fontStyle: 'italic', fontWeight: 'bold', color: '#1976d2' }}>
+                  <li
+                    {...props}
+                    style={{
+                      fontStyle: 'italic',
+                      fontWeight: 'bold',
+                      color: '#1976d2',
+                    }}
+                  >
                     <AddCircleOutlineIcon fontSize="small" style={{ marginRight: 8 }} />
                     {`Cadastrar novo produto "${option.inputValue}"`}
                   </li>
@@ -211,9 +255,11 @@ const CreateDemand: React.FC = () => {
             name="description"
             value={demandData.description}
             onChange={handleChange}
+            placeholder={getDescriptionPlaceholderByProductType(selectedProduct?.type)}
             fullWidth
+            multiline
+            minRows={3}
           />
-
           <TextField
             label="Prazo"
             name="deadline"
