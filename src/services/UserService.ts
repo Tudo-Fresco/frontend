@@ -2,6 +2,7 @@ import { ApiConnector } from '../utils/ApiConnector';
 import { UserRequestModel } from '../models/UserRequestModel';
 import { UserResponseModel } from '../models/UserResponseModel';
 import { getUserId } from './AuthService';
+import { UserUpdateProfileRequestModel } from '../models/UserUpdateProfileRequestModel';
 
 const api = new ApiConnector();
 
@@ -35,4 +36,14 @@ export async function uploadProfilePicture(file: File): Promise<void> {
   const formData = new FormData();
   formData.append('file', file);
   await api.post<void>('/user/profile-picture', formData);
+}
+
+export async function updateUserProfile(profileData: UserUpdateProfileRequestModel): Promise<void> {
+  await api.put<void>(
+    '/user/profile',
+    JSON.stringify(profileData),
+    {
+      'Content-Type': 'application/json',
+    }
+  );
 }

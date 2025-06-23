@@ -9,13 +9,20 @@ import {
   InputAdornment,
   Avatar,
   CircularProgress,
-  Tooltip,
+  MenuItem,
 } from '@mui/material';
 import { Visibility, VisibilityOff, Upload } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { getCurrentUser, getSignedProfilePictureUrl, uploadProfilePicture } from '../services/UserService';
+import {
+  getCurrentUser,
+  getSignedProfilePictureUrl,
+  uploadProfilePicture,
+  updateUserProfile,
+} from '../services/UserService';
+import { getUserId } from '../services/AuthService';
 import ErrorBanner from '../components/ErrorBanner';
 import Header from '../components/Header';
+import { GenderType } from '../enums/GenderType'; // Make sure this enum exists
 
 const UpdateUserProfile = () => {
   const navigate = useNavigate();
@@ -26,7 +33,10 @@ const UpdateUserProfile = () => {
     email: '',
     password: '',
     password_confirmation: '',
-    profile_picture: '',
+    current_password: '',
+    date_of_birth: '',
+    gender: '' as GenderType,
+    phone_number: '',
   });
 
   const [profilePictureUrl, setProfilePictureUrl] = useState<string>('');
@@ -45,11 +55,14 @@ const UpdateUserProfile = () => {
           ...prev,
           name: user.name,
           email: user.email,
+          date_of_birth: user.date_of_birth,
+          gender: user.gender,
+          phone_number: user.phone_number,
         }));
         const signedUrl = await getSignedProfilePictureUrl();
         setProfilePictureUrl(signedUrl);
       } catch (err: any) {
-        setError('Erro ao carregar perfil.');
+        setError(err.message ?? 'Erro ao carregar perfil.');
         setShowError(true);
       }
     };
@@ -76,7 +89,7 @@ const UpdateUserProfile = () => {
         const newSignedUrl = await getSignedProfilePictureUrl();
         setProfilePictureUrl(newSignedUrl);
       } catch (err: any) {
-        setError('Erro ao enviar imagem de perfil.');
+        setError(err.message ?? 'Erro ao enviar imagem de perfil.');
         setShowError(true);
       }
     }
@@ -85,18 +98,29 @@ const UpdateUserProfile = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setShowError(false);
+
     if (formData.password && formData.password !== formData.password_confirmation) {
       setError('As senhas não coincidem.');
       setShowError(true);
       return;
     }
+
     setIsLoading(true);
     try {
-      // Call backend endpoint to update user (implement as needed)
-      // await updateUser({ name: formData.name, email: formData.email, password: formData.password });
-      navigate('/my-stores');
+      await updateUserProfile({
+        uuid: getUserId(),
+        name: formData.name,
+        email: formData.email,
+        date_of_birth: formData.date_of_birth,
+        gender: formData.gender,
+        phone_number: formData.phone_number,
+        password: formData.password || undefined,
+        current_password: formData.current_password || undefined,
+      });
+
+      window.location.href = '/my-stores';
     } catch (err: any) {
-      setError('Erro ao atualizar perfil.');
+      setError(err.message ?? 'Erro ao atualizar perfil.');
       setShowError(true);
     } finally {
       setIsLoading(false);
@@ -123,7 +147,6 @@ const UpdateUserProfile = () => {
             hidden
             onChange={handleProfilePicChange}
           />
-
           <Box
             onMouseEnter={() => setIsHoveringAvatar(true)}
             onMouseLeave={() => setIsHoveringAvatar(false)}
@@ -174,6 +197,53 @@ const UpdateUserProfile = () => {
           fullWidth
           required
           value={formData.email}
+          onChange={handleChange}
+          disabled={isLoading}
+        />
+
+        <TextField
+          label="Data de nascimento"
+          name="date_of_birth"
+          type="date"
+          fullWidth
+          required
+          value={formData.date_of_birth}
+          onChange={handleChange}
+          disabled={isLoading}
+          InputLabelProps={{ shrink: true }}
+        />
+
+        <TextField
+          label="Telefone"
+          name="phone_number"
+          fullWidth
+          required
+          value={formData.phone_number}
+          onChange={handleChange}
+          disabled={isLoading}
+        />
+
+        <TextField
+          label="Gênero"
+          name="gender"
+          fullWidth
+          required
+          select
+          value={formData.gender}
+          onChange={handleChange}
+          disabled={isLoading}
+        >
+          <MenuItem value="MALE">Masculino</MenuItem>
+          <MenuItem value="FEMALE">Feminino</MenuItem>
+          <MenuItem value="OTHER">Outro</MenuItem>
+        </TextField>
+
+        <TextField
+          label="Senha atual"
+          name="current_password"
+          type="password"
+          fullWidth
+          value={formData.current_password}
           onChange={handleChange}
           disabled={isLoading}
         />
