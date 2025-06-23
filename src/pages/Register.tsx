@@ -18,6 +18,7 @@ import {
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Logo from '../components/Logo';
 import { useNavigate } from 'react-router-dom';
+import { login, logout } from '../services/AuthService';
 import { signUp } from '../services/UserService';
 import ErrorBanner from '../components/ErrorBanner';
 import { UserRequestModel } from '../models/UserRequestModel';
@@ -139,7 +140,9 @@ const Register = () => {
         password: formData.password,
       };
       await signUp(userRequest);
-      navigate('/login');
+      logout();
+      await login(formData.email, formData.password);
+      window.location.href = '/my-stores';
     } catch (err: any) {
       setError(err.message ?? 'O cadastro falhou');
       setShowError(true);
