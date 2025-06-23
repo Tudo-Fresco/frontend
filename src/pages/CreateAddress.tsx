@@ -114,10 +114,15 @@ const CreateAddress: React.FC<CreateAddressProps> = ({ onAddressSubmit }) => {
       >
         <Header />
 
-        <Typography variant="subtitle1" textAlign="center" color="text.secondary">
-          Cadastre o endereço da sua empresa 📍
+        <Typography
+          variant="h9"
+          fontWeight={100}
+          color="text.primary"
+          align="center"
+          sx={{ mt: 2 }}
+        >
+          Endereço da sua loja
         </Typography>
-
         <ErrorBanner
           message={error}
           open={showError}
