@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { Box, Button, Container, TextField, Typography, CircularProgress, MenuItem, IconButton } from '@mui/material';
+import {
+  Box,
+  Button,
+  Container,
+  TextField,
+  CircularProgress,
+  MenuItem,
+  IconButton,
+} from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
 import Logo from '../components/Logo';
 import { useNavigate } from 'react-router-dom';
@@ -42,6 +50,24 @@ const CreateStore = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showAddressForm, setShowAddressForm] = useState(true);
 
+  const [editableFields, setEditableFields] = useState<Record<keyof StoreRequestModel, boolean>>({
+    trade_name: false,
+    legal_name: false,
+    legal_phone_contact: false,
+    preferred_phone_contact: false,
+    legal_email_contact: false,
+    preferred_email_contact: false,
+    store_type: true,
+    opening_date: false,
+    size: false,
+    legal_nature: false,
+    cnae_code: false,
+    branch_classification: false,
+    cnpj: true,
+    address_uuid: false,
+    images: false,
+  });
+
   const formatToBrazilianDate = (isoDate: string): string => {
     if (!isoDate) return '';
     const [year, month, day] = isoDate.split('-');
@@ -72,6 +98,20 @@ const CreateStore = () => {
       cnpj: maskedValue,
     }));
     setIsCnpjFound(false);
+    setEditableFields((prev) => ({
+      ...prev,
+      trade_name: false,
+      legal_name: false,
+      legal_phone_contact: false,
+      preferred_phone_contact: false,
+      legal_email_contact: false,
+      preferred_email_contact: false,
+      opening_date: false,
+      size: false,
+      legal_nature: false,
+      cnae_code: false,
+      branch_classification: false,
+    }));
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -109,32 +149,50 @@ const CreateStore = () => {
 
     try {
       const response: StoreResponseModel = await freshFill(storeData.cnpj);
-      setStoreData((prev) => {
-        let openingDate: string = prev.opening_date;
-        if (response.opening_date) {
-          if (response.opening_date instanceof Date) {
-            openingDate = response.opening_date.toISOString().split('T')[0];
-          } else if (typeof response.opening_date === 'string') {
-            openingDate = response.opening_date;
-          }
-        }
 
-        return {
-          ...prev,
-          trade_name: response.trade_name ?? prev.trade_name,
-          legal_name: response.legal_name ?? prev.legal_name,
-          legal_phone_contact: response.legal_phone_contact ?? prev.legal_phone_contact,
-          preferred_phone_contact: response.preferred_phone_contact ?? prev.preferred_phone_contact,
-          legal_email_contact: response.legal_email_contact ?? prev.legal_email_contact,
-          preferred_email_contact: response.preferred_email_contact ?? prev.preferred_email_contact,
-          store_type: response.store_type ?? prev.store_type,
-          opening_date: openingDate,
-          size: response.size ?? prev.size,
-          legal_nature: response.legal_nature ?? prev.legal_nature,
-          cnae_code: response.cnae_code ?? prev.cnae_code,
-          branch_classification: response.branch_classification ?? prev.branch_classification,
-        };
+      let openingDate: string = storeData.opening_date;
+      if (response.opening_date) {
+        if (response.opening_date instanceof Date) {
+          openingDate = response.opening_date.toISOString().split('T')[0];
+        } else if (typeof response.opening_date === 'string') {
+          openingDate = response.opening_date;
+        }
+      }
+
+      setStoreData((prev) => ({
+        ...prev,
+        trade_name: response.trade_name ?? prev.trade_name,
+        legal_name: response.legal_name ?? prev.legal_name,
+        legal_phone_contact: response.legal_phone_contact ?? prev.legal_phone_contact,
+        preferred_phone_contact: response.preferred_phone_contact ?? prev.preferred_phone_contact,
+        legal_email_contact: response.legal_email_contact ?? prev.legal_email_contact,
+        preferred_email_contact: response.preferred_email_contact ?? prev.preferred_email_contact,
+        store_type: response.store_type ?? prev.store_type,
+        opening_date: openingDate,
+        size: response.size ?? prev.size,
+        legal_nature: response.legal_nature ?? prev.legal_nature,
+        cnae_code: response.cnae_code ?? prev.cnae_code,
+        branch_classification: response.branch_classification ?? prev.branch_classification,
+      }));
+
+      setEditableFields({
+        trade_name: !response.trade_name,
+        legal_name: !response.legal_name,
+        legal_phone_contact: !response.legal_phone_contact,
+        preferred_phone_contact: !response.preferred_phone_contact,
+        legal_email_contact: !response.legal_email_contact,
+        preferred_email_contact: !response.preferred_email_contact,
+        store_type: false,
+        opening_date: !openingDate,
+        size: !response.size,
+        legal_nature: !response.legal_nature,
+        cnae_code: !response.cnae_code,
+        branch_classification: !response.branch_classification,
+        cnpj: false,
+        address_uuid: false,
+        images: false,
       });
+
       setIsCnpjFound(true);
     } catch (err: any) {
       setError(err.message ?? 'Falha ao buscar dados do CNPJ. Verifique o CNPJ ou tente novamente.');
@@ -184,14 +242,7 @@ const CreateStore = () => {
 
   return (
     <Container maxWidth="sm" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
-      <Box
-        sx={{
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 2,
-        }}
-      >
+      <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
           <Logo />
         </Box>
@@ -203,17 +254,9 @@ const CreateStore = () => {
           <Box
             component="form"
             onSubmit={handleCreateStore}
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 2,
-            }}
+            sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
           >
-            <ErrorBanner
-              message={error}
-              open={showError}
-              onClose={() => setShowError(false)}
-            />
+            <ErrorBanner message={error} open={showError} onClose={() => setShowError(false)} />
 
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <TextField
@@ -234,13 +277,16 @@ const CreateStore = () => {
                 {isFreshFillLoading ? <CircularProgress size={24} /> : <SearchIcon />}
               </IconButton>
             </Box>
+
             <TextField
               label="Telefone Preferencial"
               name="preferred_phone_contact"
               fullWidth
               value={storeData.preferred_phone_contact}
               onChange={handleChange}
-              disabled={isLoading || isFreshFillLoading || !isCnpjFound}
+              disabled={
+                isLoading || isFreshFillLoading || !isCnpjFound || !editableFields.preferred_phone_contact
+              }
             />
             <TextField
               label="Email Preferencial"
@@ -248,7 +294,9 @@ const CreateStore = () => {
               fullWidth
               value={storeData.preferred_email_contact}
               onChange={handleChange}
-              disabled={isLoading || isFreshFillLoading || !isCnpjFound}
+              disabled={
+                isLoading || isFreshFillLoading || !isCnpjFound || !editableFields.preferred_email_contact
+              }
             />
             <TextField
               select
@@ -262,17 +310,21 @@ const CreateStore = () => {
             >
               {Object.values(StoreType).map((type) => (
                 <MenuItem key={type} value={type}>
-                 {getStoreTypeDisplay(type)}
+                  {getStoreTypeDisplay(type)}
                 </MenuItem>
               ))}
             </TextField>
+
             <TextField
               label="Nome Fantasia"
               name="trade_name"
               fullWidth
               required
               value={storeData.trade_name}
-              disabled
+              onChange={handleChange}
+              disabled={
+                isLoading || isFreshFillLoading || !isCnpjFound || !editableFields.trade_name
+              }
             />
             <TextField
               label="Razão Social"
@@ -280,7 +332,8 @@ const CreateStore = () => {
               fullWidth
               required
               value={storeData.legal_name}
-              disabled
+              onChange={handleChange}
+              disabled={isLoading || isFreshFillLoading || !isCnpjFound || !editableFields.legal_name}
             />
             <TextField
               label="Telefone Legal"
@@ -288,7 +341,10 @@ const CreateStore = () => {
               fullWidth
               required
               value={storeData.legal_phone_contact}
-              disabled
+              onChange={handleChange}
+              disabled={
+                isLoading || isFreshFillLoading || !isCnpjFound || !editableFields.legal_phone_contact
+              }
             />
             <TextField
               label="Email Legal"
@@ -296,7 +352,10 @@ const CreateStore = () => {
               fullWidth
               required
               value={storeData.legal_email_contact}
-              disabled
+              onChange={handleChange}
+              disabled={
+                isLoading || isFreshFillLoading || !isCnpjFound || !editableFields.legal_email_contact
+              }
             />
             <TextField
               label="Data de Abertura"
@@ -304,7 +363,8 @@ const CreateStore = () => {
               fullWidth
               required
               value={formatToBrazilianDate(storeData.opening_date)}
-              disabled
+              onChange={handleChange}
+              disabled={isLoading || isFreshFillLoading || !isCnpjFound || !editableFields.opening_date}
             />
             <TextField
               label="Porte"
@@ -312,7 +372,8 @@ const CreateStore = () => {
               fullWidth
               required
               value={storeData.size}
-              disabled
+              onChange={handleChange}
+              disabled={isLoading || isFreshFillLoading || !isCnpjFound || !editableFields.size}
             />
             <TextField
               label="Natureza Jurídica"
@@ -320,7 +381,8 @@ const CreateStore = () => {
               fullWidth
               required
               value={storeData.legal_nature}
-              disabled
+              onChange={handleChange}
+              disabled={isLoading || isFreshFillLoading || !isCnpjFound || !editableFields.legal_nature}
             />
             <TextField
               label="Código CNAE"
@@ -328,15 +390,20 @@ const CreateStore = () => {
               fullWidth
               required
               value={storeData.cnae_code}
-              disabled
+              onChange={handleChange}
+              disabled={isLoading || isFreshFillLoading || !isCnpjFound || !editableFields.cnae_code}
             />
             <TextField
               label="Classificação da Filial"
               name="branch_classification"
               fullWidth
               value={storeData.branch_classification}
-              disabled
+              onChange={handleChange}
+              disabled={
+                isLoading || isFreshFillLoading || !isCnpjFound || !editableFields.branch_classification
+              }
             />
+
             <Button
               variant="contained"
               color="primary"
@@ -349,7 +416,6 @@ const CreateStore = () => {
             </Button>
             <Button
               variant="outlined"
-              color="secondary"
               onClick={() => setShowAddressForm(true)}
               disabled={isLoading || isFreshFillLoading || !isCnpjFound}
             >
