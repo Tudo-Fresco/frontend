@@ -19,7 +19,7 @@ import { token_is_valid, login } from '../services/AuthService';
 
 const Login = () => {
   const navigate = useNavigate();
-  const [checkingToken, setCheckingToken] = useState(true); // ✅ novo estado
+  const [checkingToken, setCheckingToken] = useState(true);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -27,12 +27,11 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
 
-  // ✅ Executa a verificação com segurança
   useEffect(() => {
     if (token_is_valid()) {
       navigate('/my-stores');
     } else {
-      setCheckingToken(false); // agora sim libera a renderização
+      setCheckingToken(false);
     }
   }, []);
 
@@ -55,7 +54,6 @@ const Login = () => {
   const handleTogglePasswordConfirmation = () =>
     setShowPasswordConfirmation((prev) => !prev);
 
-  // ✅ Enquanto estiver verificando o token, mostra só loading
   if (checkingToken) {
     return (
       <Container
