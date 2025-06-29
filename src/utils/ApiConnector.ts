@@ -2,7 +2,7 @@ import { getToken } from '../services/TokenService';
 import { EnvManager } from './EnvManager';
 
 export class ApiConnector {
-  private readonly baseUrl = EnvManager.getEnvVariable('VITE_API_BASE_URL');
+  private readonly baseUrl = EnvManager.getEnvVariable('VITE_API_BASE_URL') ?? 'https://backend-632322610910.southamerica-east1.run.app';
   private useAuth = true;
 
   private addAuthorizationHeader(headers: HeadersInit = {}): HeadersInit {
