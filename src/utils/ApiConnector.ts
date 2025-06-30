@@ -40,7 +40,7 @@ export class ApiConnector {
 
   private async fetchWithHandling<T>(url: string, options: RequestInit): Promise<T> {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4000);
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
   
     try {
       const response = await fetch(url, { ...options, signal: controller.signal });
