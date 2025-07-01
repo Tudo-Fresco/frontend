@@ -1,3 +1,4 @@
+import { logout } from '../services/AuthService';
 import { getToken } from '../services/TokenService';
 import { EnvManager } from './EnvManager';
 
@@ -26,13 +27,18 @@ export class ApiConnector {
     } catch (e) {
       throw new Error('Resposta inválida do servidor');
     }
-
+  
     if (!response.ok) {
+      if (response.status === 401) {
+        logout();
+        throw new Error('Usuário não autorizado');
+      }
       throw new Error(data?.message ?? 'Erro inesperado na requisição');
     }
-
+  
     return data.payload as T;
   }
+  
 
   public setUseAuthorization(use: boolean): undefined {
     this.useAuth = use;
