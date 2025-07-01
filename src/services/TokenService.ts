@@ -13,9 +13,6 @@ export function setToken(token: string | null) {
   }
   
 export function getToken(): string | null {
-    if (isTokenExpired()){
-      return null;
-    }
     return currentToken ?? localStorage.getItem('accessToken');
 }
 
