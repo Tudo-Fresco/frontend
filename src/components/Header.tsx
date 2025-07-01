@@ -18,64 +18,66 @@ const Header: React.FC = () => {
   };
 
   const handleClose = () => setAnchorEl(null);
-
   const handleNavigateToStores = () => {
     handleClose();
     navigate('/my-stores');
   };
-
   const handleGoBack = () => {
     handleClose();
     navigate(-1);
   };
 
   return (
-    <Box
-      component="header"
-      sx={{
-        width: '100%',
-        height: { xs: 64, sm: 72, md: 77 },
-        px: { xs: 1, sm: 2 },
-        display: 'flex',
-        alignItems: 'center',
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        zIndex: 1300,
-        backgroundColor: '#e8f5e9',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-        boxSizing: 'border-box',
-      }}
-    >
-      <Box sx={{ width: 60, display: 'flex', alignItems: 'center' }}>
-        <IconButton
-          edge="start"
-          onClick={handleMenuClick}
-          size={isMobile ? 'small' : 'medium'}
-        >
-          <MenuIcon fontSize={isMobile ? 'small' : 'medium'} />
-        </IconButton>
-      </Box>
-
-      <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
-        <Logo size={isMobile ? 65 : 80} />
-      </Box>
-
-      <Box sx={{ width: 60, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-        <ProfileMenu />
-      </Box>
-
-      <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+    <>
+      <Box
+        component="header"
+        sx={{
+          width: '100%',
+          height: { xs: 64, sm: 72, md: 77 },
+          px: { xs: 1, sm: 2 },
+          display: 'flex',
+          alignItems: 'center',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          zIndex: 1300,
+          backgroundColor: '#e8f5e9',
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+          boxSizing: 'border-box',
+        }}
       >
-        <MenuItem onClick={handleNavigateToStores}>Minhas lojas</MenuItem>
-        <MenuItem onClick={handleGoBack}>Página anterior</MenuItem>
-      </Menu>
-    </Box>
+        <Box sx={{ width: 60, display: 'flex', alignItems: 'center' }}>
+          <IconButton
+            edge="start"
+            onClick={handleMenuClick}
+            size={isMobile ? 'small' : 'medium'}
+          >
+            <MenuIcon fontSize={isMobile ? 'small' : 'medium'} />
+          </IconButton>
+        </Box>
+
+        <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
+          <Logo size={isMobile ? 65 : 80} />
+        </Box>
+
+        <Box sx={{ width: 60, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+          <ProfileMenu />
+        </Box>
+
+        <Menu
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+        >
+          <MenuItem onClick={handleNavigateToStores}>Minhas lojas</MenuItem>
+          <MenuItem onClick={handleGoBack}>Página anterior</MenuItem>
+        </Menu>
+      </Box>
+
+      <Box sx={{ height: { xs: 64, sm: 72, md: 77 } }} />
+    </>
   );
 };
 
