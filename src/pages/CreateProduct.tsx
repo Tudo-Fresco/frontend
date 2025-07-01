@@ -25,7 +25,7 @@ const CreateProduct: React.FC = () => {
   const initialName = searchParams.get('name') || '';
 
   const [name, setName] = useState(initialName);
-  const [unitType, setUnitType] = useState<UnitType>(UnitType.PIECE);
+  const [unitType, setUnitType] = useState<UnitType>(UnitType.KILOGRAM);
   const [productType, setProductType] = useState<ProductType>(ProductType.VEGETABLE);
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
