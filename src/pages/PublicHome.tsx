@@ -1,11 +1,20 @@
 import { Box, Button, Typography, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ApiConnector } from '../utils/ApiConnector';
 
 const PublicHome = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  useEffect(() => {
+    const api = new ApiConnector();
+    api.setUseAuthorization(false);
+    api.get('/').catch(() => {
+    });
+  }, []);
 
   return (
     <Box sx={{ width: '100%', overflow: 'hidden' }}>
