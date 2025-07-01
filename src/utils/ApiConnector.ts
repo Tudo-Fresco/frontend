@@ -31,7 +31,6 @@ export class ApiConnector {
     if (!response.ok) {
       if (response.status === 401) {
         logout();
-        throw new Error('Usuário não autorizado');
       }
       throw new Error(data?.message ?? 'Erro inesperado na requisição');
     }
