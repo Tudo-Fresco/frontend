@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { UserAccess } from '../enums/UserAccess';
-import { getUserRoles, logout, token_is_valid } from '../services/AuthService';
+import { getUserRoles } from '../services/AuthService';
 
 interface AuthContextType {
   role: UserAccess;
@@ -17,16 +17,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const fetchRole = () => {
-      if (!token_is_valid()) {
-        logout();
-        setRole(UserAccess.GUEST);
-        setIsAuthenticated(false);
-      } else {
+      try {
         const userRole = getUserRoles();
         setRole(userRole);
         setIsAuthenticated(userRole !== UserAccess.GUEST);
+      } catch {
+        setRole(UserAccess.GUEST);
+        setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
     fetchRole();
   }, []);
