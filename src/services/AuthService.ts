@@ -50,5 +50,6 @@ export function getUserId(): string | null {
 
 export function token_is_valid(): boolean {
   const token = decodeToken();
-  return !! token && !isTokenExpired();
+  const isValid: boolean = !! token && !isTokenExpired();
+  return isValid;
 }
