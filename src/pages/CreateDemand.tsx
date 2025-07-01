@@ -77,8 +77,9 @@ const CreateDemand: React.FC = () => {
     product_uuid: '',
     responsible_uuid: decodeToken()?.sub ?? '',
     needed_count: 1,
+    minimum_count: 1,
     description: '',
-    deadline: new Date().toISOString(),
+    deadline: new Date().toISOString().slice(0, 16), // "yyyy-MM-ddTHH:mm"
     status: DemandStatus.OPENED,
   });
 
@@ -109,16 +110,27 @@ const CreateDemand: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
     setDemandData((prev) => ({
       ...prev,
-      [name]: name === 'needed_count' ? parseInt(value) : value,
+      [name]: ['needed_count', 'minimum_count'].includes(name)
+        ? parseInt(value)
+        : value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!selectedProduct) {
       setErrorMessage('Você precisa selecionar um produto');
+      setShowError(true);
+      return;
+    }
+
+    // Optional: Validate deadline is future date/time
+    if (new Date(demandData.deadline) <= new Date()) {
+      setErrorMessage('O prazo deve ser uma data futura');
       setShowError(true);
       return;
     }
@@ -127,7 +139,11 @@ const CreateDemand: React.FC = () => {
     setLoading(true);
 
     try {
-      await createDemand({ ...demandData, product_uuid: selectedProduct.uuid });
+      await createDemand({
+        ...demandData,
+        product_uuid: selectedProduct.uuid,
+        deadline: new Date(demandData.deadline).toISOString(),
+      });
       setShowSuccess(true);
       setTimeout(() => navigate(-1), 1500);
     } catch {
@@ -240,14 +256,27 @@ const CreateDemand: React.FC = () => {
             )}
           />
 
+          {/* Quantities stacked */}
           <TextField
-            label="Quantidade Necessária"
+            label="Quantidade desejada"
             name="needed_count"
             type="number"
             value={demandData.needed_count}
             onChange={handleChange}
             required
             fullWidth
+            inputProps={{ min: 1 }}
+          />
+
+          <TextField
+            label="Quantidade mínima para entrega"
+            name="minimum_count"
+            type="number"
+            value={demandData.minimum_count}
+            onChange={handleChange}
+            required
+            fullWidth
+            inputProps={{ min: 1 }}
           />
 
           <TextField
@@ -260,17 +289,13 @@ const CreateDemand: React.FC = () => {
             multiline
             minRows={3}
           />
+
           <TextField
             label="Prazo"
             name="deadline"
             type="datetime-local"
-            value={demandData.deadline.slice(0, 16)}
-            onChange={(e) =>
-              setDemandData((prev) => ({
-                ...prev,
-                deadline: new Date(e.target.value).toISOString(),
-              }))
-            }
+            value={demandData.deadline}
+            onChange={handleChange}
             required
             fullWidth
           />
